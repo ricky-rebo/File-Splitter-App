@@ -2,7 +2,6 @@ package filesplitterapp.view;
 
 import filesplitterapp.MainApp;
 import filesplitterapp.model.splitter.*;
-import filesplitterapp.model.splitter.Splitter.SplitMode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
@@ -14,7 +13,17 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.security.InvalidKeyException;
 
-//TODO docs
+/**
+ * Controller della view per unire un file diviso.
+ * <p>
+ * Contiene i riferimenti a tutti i componenti della view con cui è necessario interagire, e definisce i comportamenti<br>
+ * della view in risposta agli input dell'utente e dei click dei pulsanti
+ * <p>
+ * I riferimenti agli elementi e i gestori dei pulsanti sono contrassegnati con il tag @FXML, per poter essere visti dagli elementi<br>
+ * all'interno del relativo file .fxml di questa view.
+ *
+ * @author Riccardo Rebottini
+ */
 public class MergeFileDialogController {
     @FXML private Label lblPinfFile;
     @FXML private Label lblFile;
@@ -32,14 +41,17 @@ public class MergeFileDialogController {
     private SplitInfo info = null;
 
     /**
-     * Default constructor
+     * Costruttore base.
+     * <p>
+     * NOTA: L'inizializzazione vera e propria non avviene qui, ma nel metodo privato {@code initialize()}, che<br>
+     * viene chiamato automaticamente dopo che il file fxml è stato caricato.
      */
     public MergeFileDialogController() {}
 
 
-    /**
-     * Initialize the controller class.
-     * This method is automatically called after the fxml file has been loaded.
+    /*
+     * Inizializza il controller
+     * Questo metodo viene chiamato automaticamente dopo che il file .fxml è stato caricato
      */
     @FXML
     private void initialize() {
@@ -51,29 +63,32 @@ public class MergeFileDialogController {
         showKeyField(false);
     }
 
-
+    /* Mostra il campo per inserire la chiave, e la relativa label */
     private void showKeyField(boolean show) {
         lblKey.setVisible(show);
         txtKey.setVisible(show);
     }
 
 
-    /**
-     * Sets the stage of this dialog
-     */
+    /** Imposta lo stage di questo dialog */
     public void setDialogStage(Stage stage) {
         this.dialogStage = stage;
     }
 
 
+    /** Imposta un riferimento all'applicazione principale.
+     * <p>
+     * Viene utilizzato dall'applicazione principale per restituire un riferimento a se stessa.
+     */
     public void setMainApp(MainApp mainApp) { this.mainApp = mainApp; }
 
 
     /**
-     * Open a file chooser and let the user choose a .pinf file, and if a file
-     * has been chosen it try to load Split Info and sets it
-     *
-     * @return true if a SplitInfoContainer object has been loaded correctly, false otherwise
+     * Permette all'utente di scegliere un file {@value filesplitterapp.model.splitter.SplitInfo#PINFO_EXT} tramite un {@code FileChooser}.
+     * <p>
+     * Se l'utente non seleziona nessun file ritorna semplicemente false.<br>
+     * Se invece l'utente seleziona un file {@value filesplitterapp.model.splitter.SplitInfo#PINFO_EXT} che non viene caricato correttamente viene<br>
+     * mostrato un alert per segnalare l'errore all'utente.
      */
     public boolean chooseInfoFile(Stage stage) {
         FileChooser fileChooser = new FileChooser();
@@ -96,6 +111,11 @@ public class MergeFileDialogController {
     }
 
 
+    /**
+     * Imposta un file da unire all'interno del dialog.
+     * @param infoFile il file {@value filesplitterapp.model.splitter.SplitInfo#PINFO_EXT} selezionato
+     * @param info l'oggetto {@code SplitInfoContainer} caricato dal file {@value filesplitterapp.model.splitter.SplitInfo#PINFO_EXT}
+     */
     private void setInfo(File infoFile, SplitInfo info) {
         this.info = info;
 
@@ -104,9 +124,9 @@ public class MergeFileDialogController {
 
         lblFile.setText(info.getName());
         lblSplitMode.setText(info.getSplitMode().toString());
-        lblParts.setText((""+info.getParts()));
+        lblParts.setText((""+info.getPartsNum()));
 
-        showKeyField(info.getSplitMode() == SplitMode.CRYPTO);
+        showKeyField(info.getSplitMode() == SplitInfo.SplitMode.CRYPTO);
     }
 
 
@@ -126,24 +146,27 @@ public class MergeFileDialogController {
 
     @FXML
     private void handleMerge() {
-        Merger merger;
+        //Se la destinazione del file è stata cambiata nel form, viene cambiata anche nel'oggetto info
+        if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
+
+        if(mainApp.mergeFile(info, txtKey.getText(), chkDeleteFiles.isSelected()))
+            dialogStage.close();
+
+        /*Merger merger;
         try {
             switch(info.getSplitMode()) {
                 case DEFAULT: merger = new Merger(info); break;
                 case ZIP: merger = new ZipMerger(info); break;
                 case CRYPTO: merger = new CryptoMerger(info, txtKey.getText()); break;
-                default: return; //TODO add error handling?
+                default: return;
             }
-
-            //Se la destinazione del file è stata cambiata nel form, viene cambiata anche nel'oggetto info
-            if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
 
             //Chiamata alla procedura di merge
             merger.merge();
 
 
             if(chkDeleteFiles.isSelected()) {
-                merger.deletePartFiles();
+                merger.deleteParts();
                 info.deleteInfoFile();
             }
 
@@ -151,13 +174,13 @@ public class MergeFileDialogController {
                     "Il file "+info.getName()+" è stato ricomposto correttamente.");
             dialogStage.close();
         }
-        catch (InvalidKeyException e) {
-            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", e.getMessage());
+        catch (InvalidKeyException ex) {
+            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", ex.getMessage());
         }
         catch (SplitterException ex) {
+            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", ex.getMessage());
             ex.printStackTrace();
-            //TODO add error log?
-        }
+        }*/
     }
 
 

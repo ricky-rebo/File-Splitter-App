@@ -9,33 +9,52 @@ import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 
+/**
+ * {@code ZipMerger} estende {@code Merger}, implementando la lettura di parti in formato crittografato.
+ * <p>
+ * Questa funzionalità si ottiene facendo un override di {@code readFile()} di {@code FileManipulator}. In questo modo la procedura <br>
+ * di merge definita in {@code Merger} non cambia, ma viene modificato solo il modo in cui vengono lette le parti.
+ *
+ * @author Riccardo Rebottini
+ */
 public class CryptoMerger extends Merger implements Securable {
     private Cipher cipher;
 
+    /**
+     * Crea un nuovo oggetto {@code CryptoMerger}.
+     * <p>
+     * Il costruttore salva le informazioni sul file da unire, verificha la chiave fornita, e se è corretta
+     * inizializza il {@code Cipher}.
+     *
+     * @throws InvalidKeyException in caso la chiave fornita non sia corretta
+     * @throws SplitterException in caso si verifichino degli errori durante l'inizializzazione del {@code Cipher}
+     */
     public CryptoMerger(SplitInfo info, String passwd) throws InvalidKeyException, SplitterException {
         super(info);
 
+        info.verifyKey(passwd.getBytes());
         try {
-            passwd = calcMD5(passwd);
-
-            //Inserted key check
-            String keyHash = calcMD5(passwd);
-            if(!keyHash.equals(info.getKeyHash()))
-                throw new InvalidKeyException("Chiave inserita non valida");
-
-            cipher = getCipher(Cipher.DECRYPT_MODE, passwd.getBytes(), new IvParameterSpec(info.getIV(keyHash)));
-        } catch (SecurableException ex) {
-            throw new SplitterException(ex);
+            cipher = getDecipher(passwd.getBytes(), new IvParameterSpec(info.getIV()));
+        }
+        catch (SecurableException ex) {
+            throw new SplitterException("Impossibile unire il file "+info.getName(), ex);
         }
     }
 
-
+    //Ritorna true se il nome del file assato corrisponde al nome dell'ultima parte
+    //Utilizzato da writeFile() per decidere se usare cipher.update() o cipher.doFinal()
     private boolean isLastPart(String pname) {
-        int pnum = Integer.parseInt(String.valueOf(pname.charAt(pname.length() - 1)));
-        return pnum == info.getParts();
+        int pnum = Integer.parseInt(pname.substring(pname.lastIndexOf('.')+4));
+        //System.out.println("> extracted num: "+pnum+"\n> parts num: "+info.getPartsNum());
+        return pnum == info.getPartsNum();
     }
 
 
+    /**
+     * Legge il contenuto di un file crittografato, e ritorna il contenuto in formato byte array.
+     *
+     * @throws IOException in cas si verifichino problemi durante la lettura del file o la decifratura del contenuto
+     */
     @Override
     protected byte[] readFile(File file) throws IOException {
         try {

@@ -1,0 +1,83 @@
+1.3u1
+- Something happend, like Big Bang, but for this project
+BUG NOTI:
+    + Cipher Crypt non funzionante -> Perdita di dati durante crypting
+
+
+1.3u2 [DELETED]
+BUG NOTI: Troppi
+
+
+1.3u3
+- Aggiunto SplitInfo::workspace -> Sostituisce 'saveTo'passato direttamente a split() e merge()
+- Cambio gestione setPartDim in SplitFile -> Ultima parte SEMPRE più piccola
+- Aggiunto SplitInfo::partsize
+- Rimosso SplitInfo.SEPARATOR
+- Rimosso SplitInfo::getFileSize()
+BUG NOTI:
+    + Cipher Crypt non funzionante -> Perdita di dati durante crypting
+
+
+1.3u4
+- FileDimModifier -> FileManipulator
+- Rimosso FileManipulator.SEPARATOR
+- FileSplitterException -> SplitterException
+- FileMerger scomposto in Merger, ZipMerger, Cryptomerger
+- Fixato Bug Cipher Crypt
+
+- Reimplementato FileManipulator::readFile()
+
+- Aggiunta interfaccia Securable -> implementata in CryptoSplitter e CryptoMerger
+  Questa interfaccia specifica gli algorimti utilizzati per la cifratura e l'hashing, e
+  implementa tre metodi default:
+  + Securable::calcMD5() che calcola l'hash di un contenuto
+  + Securable::getCipher() che ritorna un oggetto Cipher iniziaizzato. Presente in due overloading per
+    permettere di specificare o meno parametri da passare al cipher in fase di inizializzazione
+- Cambio di algoritmo di cifratura: AES/ECB/PKCS5Padding -> AES/CBC/PKCS5Padding
+  Pensato per lavorare in Block Chaning, produrrà output cifrati diversi anche se gli input sono uguali
+- Aggiunto SplitInfo::iv -> per salvare e utilizzare l'IvParameterSpec necessario alla modalità CBC in
+  fase di decifratura
+
+
+1.3u5
+- Chiave utilizzata -> hash della password inserita dall'utente
+  Hash chiave -> Hash dell'hash generato prima
+- Metodo writeFile() spostato da Merger a FileManipulator
+- Splitter::writePart() -> Splitter::readFile()
+  Rimosso da Splitter e reimplementato solo in ZipSplitter e CryptoSplitter
+- Merger::readPart() -> Merger::readFile()
+  Rimosso da Merger e reimplementato solo in ZipMerger e CryptoMerger
+- Util.chooseDirectory -> MainApp::chooseDirectory()
+- Util.throwAlert() -> MainApp::throwAlert()
+- Rimossa classe util.Util
+
+
+1.3u6
+- Cambiata gestione errori tra FileManipulator::writeFile() e Splitter::split().
+  writeFile() lancia eccezioni di tipo IOException che split() gestisce e incapsula
+  all'interno di eccezioni SplitterException
+- Cambiata gestione errori tra FileManipulator::readFile() e Merger::merge().
+  readFile() lancia eccezioni di tipo IOException che merge() gestisce e incapsula
+  all'interno di eccezioni SplitterException
+- Cambiata gestione errori in CryptoSplitter e CryptoMerger -> SecurableException incapsulata
+  all'interno di una SplitterException
+- Cambiata gestione errori in Securable::calcMD5() -> lancia eccezioni di tipo SecurableException
+
+
+1.3u7
+- Securable::calcMD5() -> Securable::calcHash()
+- Securable::calcHash() spostato in FileManipulator
+- Securable.HASH_ALG spostato in FileManipulator
+- Aggiunto SplitInfo::fileHash -> Per salvare l'hash del file originale, da utilizzare in fase di merge per verificare che il contenuto corrisponda
+- Aggiunto salvataggio dell'hash del file tramite SplitInfo::setFileHash() in Splitter::split()
+- Aggiunto controllo hash file in Merger::merge()
+
+- Aggiunta funzione MainApp::logError()
+
+- FileManipulator::calcHash() spostato in SplitInfo
+- FileManipulator.HASH_ALG spostato in Splitinfo
+- Aggiunto SplitInfo::verifyKey()
+- Aggiunto SpliTInfo::verifyContent()
+
+- Aggiunta funzione che disabilita i pultanti 'Modifica', 'Rimuovi', 'Rimuovi tutti' e 'Dividi file' se non ci sono file in coda
+- Aggiunta icona all'applicazione, posizionata in /resources/images/icon-512.png

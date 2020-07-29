@@ -8,35 +8,53 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * {@code CryptoSplitter} estende {@code Splitter}, implementando la scrittura di file in formato crittografato.
+ * <p>
+ * Questa funzionalità si ottiene facendo un override di {@code writeFile()} di {@code FileManipulator}. In questo modo la procedura <br>
+ * di split definita in {@code Splitter} non cambia, ma viene modificato solo il modo in cui vengono scritte le parti.
+ *
+ * @author Riccardo Rebottini
+ */
 public class CryptoSplitter extends Splitter implements Securable {
     private Cipher cipher;
 
 
-    //TODO docs
+    /**
+     * Crea un nuovo oggetto {@code CryptoSplitter}.
+     * <p>
+     * Il costruttore salva le informazioni sul file da dividere, e inizializza il {@code Cipher} con la chiave fornita.
+     *
+     * @throws SplitterException in caso si verifichino problemi durante l'inizializzazione del {@code Cipher}
+     */
     public CryptoSplitter(SplitInfo infos, String passwd) throws SplitterException {
         super(infos);
+        info.setKeyHash(passwd.getBytes());
 
         try {
-            passwd = calcMD5(passwd);
-            info.setKeyHash(calcMD5(passwd));
-            //System.out.println(("> Key Hash: "+info.getKeyHash()+" (len: "+info.getKeyHash().getBytes().length+")"));
-
-            cipher = getCipher(Cipher.ENCRYPT_MODE, passwd.getBytes());
+            cipher = getCipher(passwd.getBytes());
         } catch (SecurableException ex) {
-            throw new SplitterException(ex);
+            throw new SplitterException("Impossibile dividere il file "+info.getFile().getAbsolutePath(), ex);
         }
 
     }
 
+    //Ritorna true se il nome del file assato corrisponde al nome dell'ultima parte
+    //Utilizzato da writeFile() per decidere se usare cipher.update() o cipher.doFinal()
     private boolean isLastPart(String pname) {
-        return Integer.parseInt(String.valueOf(pname.charAt(pname.length()-1))) == info.getParts();
+        int pnum = Integer.parseInt(pname.substring(pname.lastIndexOf('.')+4));
+        return pnum == info.getPartsNum();
     }
 
 
+    /**
+     * Scrive un byte array in formato crittografato su un file.
+     *
+     * @throws IOException in caso si verifichino problemi durante la cifratura del contenuto o la scrittura del file
+     */
     @Override
     protected void writeFile(File file, byte[] part) throws IOException {
-        //System.out.print("> Writing crypted part " + file.getName());
-        FileOutputStream fos = null;
+        FileOutputStream fos;
 
         fos = new FileOutputStream(file);
         byte[] ciphered;
@@ -47,9 +65,6 @@ public class CryptoSplitter extends Splitter implements Securable {
             }
             else
                 ciphered = cipher.update(part);
-
-            //System.out.println(" (dim: "+ciphered.length+")");
-            //System.out.println("> Content: "+ciphered);
 
             fos.write(ciphered);
             fos.close();
