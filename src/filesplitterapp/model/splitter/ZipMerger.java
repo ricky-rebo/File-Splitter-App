@@ -12,30 +12,26 @@ public class ZipMerger extends Merger {
     }
 
     @Override
-    protected byte[] readFile(File file) throws SplitterException {
+    protected byte[] readFile(File file) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[BUFFER_SIZE];
         int len;
         ZipInputStream zis;
 
-        System.out.println("> Reading zipped part "+file.getAbsolutePath()+" (dim: "+file.length()+")");
-        try {
-            zis = new ZipInputStream(new FileInputStream(file));
-            zis.getNextEntry();
+        //System.out.println("> Reading zipped part "+file.getAbsolutePath()+" (dim: "+file.length()+")");
 
-            while((len=zis.read(buffer)) != -1){
-                System.out.println(("> Read a chunk of "+len+" from the part "+file.getName())+" (buffer total size: "+buffer.length+")");
-                baos.write(buffer, 0, len);
-            }
+        zis = new ZipInputStream(new FileInputStream(file));
+        zis.getNextEntry();
 
-            zis.closeEntry();
-            zis.close();
-        }
-        catch(IOException ex) {
-            throw new SplitterException("Impossibile leggere file\n"+file.getAbsolutePath(), ex);
+        while((len=zis.read(buffer)) != -1){
+            //System.out.println(("> Read a chunk of "+len+" from the part "+file.getName())+" (buffer total size: "+buffer.length+")");
+            baos.write(buffer, 0, len);
         }
 
-        System.out.println("> Read data dim: "+baos.size());
+        zis.closeEntry();
+        zis.close();
+
+        //System.out.println("> Read data dim: "+baos.size());
         return baos.toByteArray();
     }
 }

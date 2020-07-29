@@ -1,7 +1,6 @@
 package filesplitterapp.model.splitter;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,22 +36,31 @@ public class Splitter extends FileManipulator {
 	 * Split the file pointed in the SplitInfo object, with the specified split options
 	 * @return true if the split procedure works fine, false otherwise
 	 */
-	public boolean split() throws SplitterException {
+	public void split() throws SplitterException {
 		File saveDir = new File(info.getWorkspace());
 		if(!saveDir.exists() || !saveDir.isDirectory()) saveDir.mkdir();
 
-		byte[] bytes = readFile(info.getFile());
-		if(bytes == null) { System.out.println("NO BYTES READ"); return false; }
+		byte[] bytes;
+		List<byte[]> parts;
 
-		List<byte[]> parts = partition(bytes, info.getParts());
+		try {
+			bytes = readFile(info.getFile());
+			parts = partition(bytes, info.getParts());
 
-		for(int i=0; i<parts.size(); i++) {
-			System.out.println("> Part "+i+" dim: "+parts.get(i).length);
-			writeFile(getPartFile(info.getWorkspace(), i+1), parts.get(i));
+			for(int i=0; i<parts.size(); i++) {
+				System.out.println("> Part "+i+" dim: "+parts.get(i).length);
+				writeFile(getPartFile(info.getWorkspace(), i+1), parts.get(i));
+			}
+
+			info.save();
+		}
+		catch(IOException ex) {
+			deleteParts();
+			info.deleteInfoFile();
+			throw new SplitterException("Impossibile dividere file "+info.getFile().getAbsolutePath(), ex);
 		}
 
-		info.save();
-		return true;
+
 	}
 
 	private List<byte[]> partition(byte[] bytes, int partsnum) {
@@ -66,14 +74,5 @@ public class Splitter extends FileManipulator {
 		}
 
 		return parts;
-	}
-
-	protected void deleteParts() {
-		for(int i=0; i<info.getParts(); i++) {
-			File pfile = getPartFile(info.getWorkspace(), i+1);
-			if(pfile.exists() && pfile.isFile())
-				pfile.delete();
-			else return;
-		}
 	}
 }

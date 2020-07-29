@@ -2,7 +2,6 @@ package filesplitterapp.model;
 
 import filesplitterapp.model.splitter.SplitInfo;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
-import filesplitterapp.util.Util;
 import javafx.beans.property.*;
 
 import java.io.File;

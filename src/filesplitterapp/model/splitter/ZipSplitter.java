@@ -14,18 +14,14 @@ public class ZipSplitter extends Splitter {
 
 
     @Override
-    protected void writeFile(File file, byte[] part) throws SplitterException {
+    protected void writeFile(File file, byte[] part) throws IOException {
         ZipOutputStream zos = null;
-        try {
-            zos = new ZipOutputStream(new FileOutputStream(file));
-            zos.putNextEntry(new ZipEntry(file.getName()));
-            zos.write(part);
-            zos.closeEntry();
-            zos.close();
-        }
-        catch(IOException ex) {
-            deleteParts();
-            throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath()+"\n\nFile "+info.getName()+" non diviso", ex);
-        }
+
+        zos = new ZipOutputStream(new FileOutputStream(file));
+        zos.putNextEntry(new ZipEntry(file.getName()));
+        zos.write(part);
+        zos.closeEntry();
+        zos.close();
+
     }
 }

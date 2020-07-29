@@ -3,7 +3,6 @@ package filesplitterapp.view;
 import filesplitterapp.MainApp;
 import filesplitterapp.model.splitter.*;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
@@ -107,8 +106,7 @@ public class MergeFileDialogController {
         lblSplitMode.setText(info.getSplitMode().toString());
         lblParts.setText((""+info.getParts()));
 
-        if(info.getSplitMode() == SplitMode.CRYPTO)
-            showKeyField(true);
+        showKeyField(info.getSplitMode() == SplitMode.CRYPTO);
     }
 
 
@@ -134,22 +132,29 @@ public class MergeFileDialogController {
                 case DEFAULT: merger = new Merger(info); break;
                 case ZIP: merger = new ZipMerger(info); break;
                 case CRYPTO: merger = new CryptoMerger(info, txtKey.getText()); break;
-                default: return; //TODO add error handling
+                default: return; //TODO add error handling?
             }
+
             //Se la destinazione del file è stata cambiata nel form, viene cambiata anche nel'oggetto info
             if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
-            try { merger.merge(); }
-            catch(Exception ex) { mainApp.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
 
-            if(chkDeleteFiles.isSelected())
+            //Chiamata alla procedura di merge
+            merger.merge();
+
+
+            if(chkDeleteFiles.isSelected()) {
                 merger.deletePartFiles();
+                info.deleteInfoFile();
+            }
 
             mainApp.throwAlert(AlertType.INFORMATION, "Merge File", "File ricomposto correttamente",
                     "Il file "+info.getName()+" è stato ricomposto correttamente.");
             dialogStage.close();
-        } catch (InvalidKeyException e) {
+        }
+        catch (InvalidKeyException e) {
             mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", e.getMessage());
-        } catch (SecurableException ex) {
+        }
+        catch (SplitterException ex) {
             ex.printStackTrace();
             //TODO add error log?
         }

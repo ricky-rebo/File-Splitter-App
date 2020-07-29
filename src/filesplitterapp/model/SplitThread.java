@@ -1,13 +1,16 @@
 package filesplitterapp.model;
 
-import filesplitterapp.model.splitter.*;
-import filesplitterapp.view.HomeController;
+import filesplitterapp.model.splitter.CryptoSplitter;
+import filesplitterapp.model.splitter.Splitter;
+import filesplitterapp.model.splitter.SplitterException;
+import filesplitterapp.model.splitter.ZipSplitter;
 
 public class SplitThread extends Thread {
     private SplitFile splitFile;
     private Runnable callback;
 
-    private boolean split= false;
+    private boolean split = false;
+    private Exception ex = null;
 
     public SplitThread(SplitFile splitFile, Runnable callback) {
         this.splitFile = splitFile;
@@ -18,7 +21,6 @@ public class SplitThread extends Thread {
     public void run() {
         //System.out.println("THREAD LAUNCHED");
         Splitter splitter;
-        //TODO add custom exception on split() and remove a file from list only of it has been split correctly
 
         //System.out.println("> Calling split procedure ("+splitFile.filenameProperty().get()+")");
         try {
@@ -36,9 +38,11 @@ public class SplitThread extends Thread {
                 default:
                     return;
             }
-            split = splitter.split();
-        } catch (SplitterException | SecurableException e) {
-            e.printStackTrace(); //TODO add proper error handling
+            splitter.split();
+            split = true;
+        } catch (SplitterException ex) {
+            this.ex = ex;
+            split = false;
         }
 
         // Chiamata alla funzione di callback
@@ -52,4 +56,6 @@ public class SplitThread extends Thread {
     public boolean isSplit() {
         return split;
     }
+
+    public Exception getException() { return ex; }
 }

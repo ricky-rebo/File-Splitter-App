@@ -1,9 +1,8 @@
 package filesplitterapp.model.splitter;
 
-import java.io.*;
-import java.security.InvalidKeyException;
-
 import filesplitterapp.model.splitter.Splitter.SplitMode;
+
+import java.io.*;
 
 
 //TODO docs
@@ -38,11 +37,12 @@ public class SplitInfo implements Serializable {
     }
 
 
+    //TODO docs (for all)
     public File getFile() { return file; }
     public String getName() { return file.getName(); }
     public String getWorkspace() { return workspace; }
-    public void setWorkspace(String newWorkspace) { workspace = newWorkspace; } //TODO add newWorkspace validity check?
-    public void setFileLocation(String newLoc) { file = new File(newLoc, file.getName()); } //TODO add newLock validity check
+    public void setWorkspace(String newWorkspace) { workspace = newWorkspace; }
+    public void setFileLocation(String newLoc) { file = new File(newLoc, file.getName()); }
     public void setName(String newName) { file = new File(file.getParent(), newName); }
     public int getParts() { return parts; }
     public int getPartSize() { return partsize; }
@@ -50,25 +50,28 @@ public class SplitInfo implements Serializable {
     public void setKeyHash(String keyHash) { this.keyHash = keyHash; }
     public void setIV(byte[] iv) { this.iv = iv; }
     public String getKeyHash() { return keyHash; }
-    public byte[] getIV(String chkKeyHash){ return keyHash.equals(chkKeyHash) ? iv : null; }
+    public byte[] getIV(String chkKeyHash){ return keyHash.equals(chkKeyHash) ? iv : null; } //TODO resolve security hole
 
     public String getInfoFilename() {
         return file.getName().substring(0, file.getName().lastIndexOf('.'))+PINFO_EXT;
     }
 
 
+    public void deleteInfoFile() {
+        File finfo = new File(workspace, getInfoFilename());
+        if(finfo.exists() && finfo.isFile()) finfo.delete();
+    }
+
+
     /**
      * Save the current SplitInfo object into a @va file.
      */
-    public void save() {
+    public void save() throws IOException {
         ObjectOutputStream setInfo = null;
-        try {
-            setInfo = new ObjectOutputStream(new FileOutputStream(new File(workspace, getInfoFilename())));
-            setInfo.writeObject(this);
-            setInfo.flush();
-            setInfo.close();
-        }
-        catch(IOException e) {e.printStackTrace();}
+        setInfo = new ObjectOutputStream(new FileOutputStream(new File(workspace, getInfoFilename())));
+        setInfo.writeObject(this);
+        setInfo.flush();
+        setInfo.close();
     }
 
 
@@ -93,7 +96,7 @@ public class SplitInfo implements Serializable {
             getInfo.close();
         }
         catch(IOException | ClassNotFoundException ex) {
-            String msg = "Impossibile caricare il file\n"+infoFile.toString()+"\n"+
+            String msg = "Impossibile caricare il file\n"+infoFile.getAbsolutePath()+"\n"+
                          "E' possibile che il file sia danneggiato o non valido";
             throw new SplitterException(msg, ex);
         }

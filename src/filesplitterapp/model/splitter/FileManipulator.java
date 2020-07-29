@@ -16,39 +16,39 @@ public abstract class FileManipulator {
     }
 
 
-    /**
-     *
-     * @param file
-     * @return
-     */
-    protected byte[] readFile(File file) throws SplitterException {
+    //TODO docs
+    public void deleteParts() {
+        for(int i=0; i<info.getParts(); i++) {
+            File pfile = getPartFile(info.getWorkspace(), i+1);
+            if(pfile.exists() && pfile.isFile())
+                pfile.delete();
+            else return;
+        }
+    }
+
+
+    //TODO docs
+    protected byte[] readFile(File file) throws IOException {
         FileInputStream fis;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[BUFFER_SIZE];
         int len;
 
-        try {
-            fis  = new FileInputStream(file);
-            while((len = fis.read(buffer)) != -1)
-                baos.write(buffer, 0, len);
+        fis  = new FileInputStream(file);
+        while((len = fis.read(buffer)) != -1)
+            baos.write(buffer, 0, len);
 
-            fis.close();
-            return baos.toByteArray();
-        } catch (IOException ex) {
-            throw new SplitterException("Impossibile leggere file\n"+file.getAbsolutePath()+
-                    "", ex);
-        }
+        fis.close();
+        return baos.toByteArray();
     }
 
-    protected void writeFile(File file, byte[] bytes) throws SplitterException {
+
+    //TODO docs
+    protected void writeFile(File file, byte[] bytes) throws IOException {
         FileOutputStream fout;
-        try {
-            fout = new FileOutputStream(file);
-            fout.write(bytes);
-            fout.close();
-        } catch (IOException ex) {
-            if(file.exists() && file.isFile()) file.delete();
-            throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath(), ex);
-        }
+        fout = new FileOutputStream(file);
+        fout.write(bytes);
+        fout.close();
+
     }
 }

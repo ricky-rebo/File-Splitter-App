@@ -13,13 +13,18 @@ public class CryptoSplitter extends Splitter implements Securable {
 
 
     //TODO docs
-    public CryptoSplitter(SplitInfo infos, String passwd) throws SecurableException {
+    public CryptoSplitter(SplitInfo infos, String passwd) throws SplitterException {
         super(infos);
-        passwd = calcMD5(passwd);
-        info.setKeyHash(calcMD5(passwd));
-        //System.out.println(("> Key Hash: "+info.getKeyHash()+" (len: "+info.getKeyHash().getBytes().length+")"));
 
-        cipher = getCipher(Cipher.ENCRYPT_MODE, info.getKeyHash().getBytes());
+        try {
+            passwd = calcMD5(passwd);
+            info.setKeyHash(calcMD5(passwd));
+            //System.out.println(("> Key Hash: "+info.getKeyHash()+" (len: "+info.getKeyHash().getBytes().length+")"));
+
+            cipher = getCipher(Cipher.ENCRYPT_MODE, passwd.getBytes());
+        } catch (SecurableException ex) {
+            throw new SplitterException(ex);
+        }
 
     }
 
@@ -29,34 +34,28 @@ public class CryptoSplitter extends Splitter implements Securable {
 
 
     @Override
-    protected void writeFile(File file, byte[] part) throws SplitterException {
-        System.out.print("> Writing crypted part " + file.getName());
+    protected void writeFile(File file, byte[] part) throws IOException {
+        //System.out.print("> Writing crypted part " + file.getName());
         FileOutputStream fos = null;
+
+        fos = new FileOutputStream(file);
+        byte[] ciphered;
         try {
-            fos = new FileOutputStream(file);
-            byte[] ciphered;
-            try {
-                if(isLastPart(file.getName())) {
-                    ciphered = cipher.doFinal(part);
-                    info.setIV(cipher.getIV());
-                }
-                else
-                    ciphered = cipher.update(part);
-
-                System.out.println(" (dim: "+ciphered.length+")");
-                System.out.println("> Content: "+ciphered);
-
-                fos.write(ciphered);
-                fos.close();
-            } catch (BadPaddingException | IllegalBlockSizeException ex) {
-                deleteParts();
-                throw new SplitterException("Errore durante la cifratura del file\n"+file.getAbsolutePath()
-                        +"\n\nFile "+info.getName()+" non diviso", ex);
+            if(isLastPart(file.getName())) {
+                ciphered = cipher.doFinal(part);
+                info.setIV(cipher.getIV());
             }
-        }
-        catch(IOException ex) {
+            else
+                ciphered = cipher.update(part);
+
+            //System.out.println(" (dim: "+ciphered.length+")");
+            //System.out.println("> Content: "+ciphered);
+
+            fos.write(ciphered);
+            fos.close();
+        } catch (BadPaddingException | IllegalBlockSizeException ex) {
             deleteParts();
-            throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath()+"\n\nFile "+info.getName()+" non diviso", ex);
+            throw new IOException("Errore durante la cifratura del file\n"+file.getAbsolutePath(), ex);
         }
     }
 

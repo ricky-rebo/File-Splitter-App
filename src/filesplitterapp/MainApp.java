@@ -26,6 +26,7 @@ import java.io.IOException;
  *
  */
 public class MainApp extends Application {
+
 	private Stage primaryStage;
 	private ObservableList<SplitFile> fileList = FXCollections.observableArrayList();
 
@@ -74,7 +75,9 @@ public class MainApp extends Application {
 			HomeController controller = loader.getController();
 			controller.setMainApp(this);
 		}
-		catch(IOException ex) {ex.printStackTrace();}
+		catch(IOException ex) {
+			//TODO
+		}
 	}
 
 
@@ -129,7 +132,7 @@ public class MainApp extends Application {
 			return new boolean[]{controller.isOkClicked(), controller.applyMultiple()};
 		}
 		catch(IOException ex) {
-			ex.printStackTrace();
+			//TODO
 			return new boolean[]{false, false};
 		}
 	}
@@ -159,7 +162,9 @@ public class MainApp extends Application {
 				dialogStage.showAndWait();
 
 		}
-		catch (IOException ex) { ex.printStackTrace(); }
+		catch (IOException ex) {
+			//TODO
+		}
 	}
 
 

@@ -12,16 +12,15 @@ public interface Securable {
     String KEY_ALG = "AES";
     String HASH_ALG = "MD5";
 
-    default String calcMD5(String text) {
+    default String calcMD5(String text) throws SecurableException {
         MessageDigest md;
         try {
             md = MessageDigest.getInstance(HASH_ALG);
             md.update(text.getBytes());
             return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
         }
-        catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
+        catch (NoSuchAlgorithmException ex) {
+            throw new SecurableException(ex);
         }
     }
 
@@ -35,17 +34,15 @@ public interface Securable {
         //Create a key
         Key key = new SecretKeySpec(keyBytes, KEY_ALG);
 
-
-        //Create Cipher instance and initialize it to encryption mode
+        //Create Cipher instance and initialize it to the specified opmode, with the specified params, if provided
         try {
             cipher = Cipher.getInstance(CIPHER_ALG);
             if(params == null) cipher.init(opmode, key);
             else cipher.init(opmode, key, params);
+            return cipher;
         }
         catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException ex) {
             throw new SecurableException(ex);
         }
-
-        return cipher;
     }
 }
