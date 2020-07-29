@@ -7,35 +7,42 @@ import filesplitterapp.model.splitter.Splitter.SplitMode;
 //TODO docs
 public class SplitInfo implements Serializable {
     private static final long serialVersionUID = 20191206L;
-    private static final String SEPARATOR = File.separator;
     /**
      * L'estensione utilizzata dai file su cui questo oggetto viene serializzato.
      */
     public static final String PINFO_EXT = ".pinf";
 
     private File file;
+    private String workspace;
+    private int partsize;
     private int parts;
     private SplitMode splitMode;
     private String keyHash = null;
 
 
     /**
-     * Create Create a new SplitInfoContainer object
+     * Create a new SplitInfoContainer object
      * @param file The file to be splitted
      * @param parts the number of parts
      * @param splitMode the split mode used (DEFAULT, ZIP, CRYPTED)
      */
-    public SplitInfo(File file, int parts, SplitMode splitMode) {
+    public SplitInfo(File file, String workspace,  int parts, int partsize, SplitMode splitMode) {
         this.file = file;
+        this.workspace = workspace;
         this.parts = parts;
+        this.partsize = partsize;
         this.splitMode = splitMode;
     }
 
 
     public File getFile() { return file; }
     public String getName() { return file.getName(); }
-    public int getFileSize() {return (int)file.length(); }
+    public String getWorkspace() { return workspace; }
+    public void setWorkspace(String newWorkspace) { workspace = newWorkspace; } //TODO add newWorkspace validity check?
+    public void setFileLocation(String newLoc) { file = new File(newLoc, file.getName()); } //TODO add newLock validity check
+    public void setName(String newName) { file = new File(file.getParent(), newName); }
     public int getParts() { return parts; }
+    public int getPartSize() { return partsize; }
     public SplitMode getSplitMode() { return splitMode; }
     public String getKeyHash() { return keyHash; }
     public void setKeyHash(String keyHash) { this.keyHash = keyHash; }
@@ -48,10 +55,10 @@ public class SplitInfo implements Serializable {
     /**
      * Save the current SplitInfo object into a @va file.
      */
-    public void save(String saveTo) {
+    public void save() {
         ObjectOutputStream setInfo = null;
         try {
-            setInfo = new ObjectOutputStream(new FileOutputStream(saveTo+SEPARATOR+getInfoFilename()));
+            setInfo = new ObjectOutputStream(new FileOutputStream(new File(workspace, getInfoFilename())));
             setInfo.writeObject(this);
             setInfo.flush();
             setInfo.close();
@@ -86,7 +93,8 @@ public class SplitInfo implements Serializable {
             throw new FileSplitterException(msg, ex);
         }
 
-        obj.file = new File(infoFile.getParent()+SEPARATOR+obj.getName());
+        obj.setWorkspace(infoFile.getParent());
+        obj.setFileLocation(infoFile.getParent());
         return obj;
     }
 }

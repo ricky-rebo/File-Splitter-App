@@ -129,7 +129,8 @@ public class MergeFileDialogController {
         FileMerger merger;
         try {
             merger = new FileMerger(info, txtKey.getText());
-            try { merger.merge(txtSaveTo.getText()); }
+            if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
+            try { merger.merge(); }
             catch(Exception ex) { Util.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
 
             if(chkDeleteFiles.isSelected())

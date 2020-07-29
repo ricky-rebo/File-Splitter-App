@@ -47,6 +47,7 @@ public class CryptoSplitter extends Splitter {
             fos = new FileOutputStream(file);
             byte[] ciphered = cipher.update(part);
             System.out.println(" (dim: "+ciphered.length+")");
+            System.out.println("> Content: "+ciphered);
             fos.write(ciphered);
             fos.close();
         }

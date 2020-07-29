@@ -50,7 +50,7 @@ public class SplitFile {
         splitMode = new SimpleObjectProperty<>(mode);
         partsNum = new SimpleIntegerProperty(1);
         partSize = new SimpleIntegerProperty((int)file.length());
-        cryptKey = null;
+        //cryptKey = null;
     }
 
 
@@ -75,9 +75,8 @@ public class SplitFile {
     public void setPartSize(int size) {
         partSize.set(size);
 
-        int pnum = (int)file.length() / partSize.get();
-        if (((int)file.length() % partSize.get()) > 0)
-            pnum++;
+        int pnum = (int)file.length() / size;
+        if (((int)file.length() % size) > 0) pnum++;
         partsNum.set(pnum);
     }
     public int getPartSize() { return partSize.get(); }
@@ -85,7 +84,10 @@ public class SplitFile {
     // partsNum
     public void setPartsNum(int pnum) {
         partsNum.set(pnum);
-        partSize.set((int)file.length() / pnum);
+
+        int psize = (int)file.length() / pnum;
+        if (((int)file.length() % psize) > 0) psize++;
+        partSize.set(psize);
     }
     public int getPartsNum() { return partsNum.get(); }
 
@@ -119,7 +121,7 @@ public class SplitFile {
      * Returns a SplitInfo object
      */
     public SplitInfo getSplitInfo(){
-        SplitInfo obj = new SplitInfo(file, partsNum.get(), splitMode.get());
+        SplitInfo obj = new SplitInfo(file, getFinalDestPath(), partsNum.get(), partSize.get(), splitMode.get());
 
         //Calc key hash, if splitMode == CRYPTED
         if(splitMode.get()==SplitMode.CRYPTO) {

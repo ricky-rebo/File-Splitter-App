@@ -47,42 +47,49 @@ public class FileMerger extends FileDimModifier {
 	}
 
 	//TODO docs
-	public void merge(String saveTo) throws Exception {
-		FileOutputStream fout = null;
+	public void merge() throws Exception {
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		byte[] fileBytes = null;
-
-		//Check if a file with the same name already exist in that location
-		String mergedFilename;
-		if(info.getFile().exists() && info.getFile().isFile())
-			mergedFilename = saveTo+SEPARATOR+"merged_"+info.getName();
-		else
-			mergedFilename = saveTo+SEPARATOR+info.getName();
 
 		//TODO re-do merge procedure
 		//	write a function that get a part based on SplitMode
 		//	and slim the for cycle here
-		try {
-			fout = new FileOutputStream(mergedFilename);
-			String partLocation = info.getFile().getParent()+SEPARATOR;
-			for(int i = 0; i<info.getParts(); i++) {
-				switch(info.getSplitMode()) {
-					case DEFAULT:
-						fileBytes = readFile(getPartFile(partLocation, i+1));
-						break;
-					case ZIP:
-						fileBytes = unzipPart(getPartFile(partLocation, i+1));
-						break;
-					case CRYPTO:
-						fileBytes = uncryptPart(getPartFile(partLocation, i+1));
-				}
-				if(fileBytes == null) throw new Exception("Impossibile leggere file " + getPartFile(partLocation, i+1).getName());
-				fout.write(fileBytes);
-				//TODO remove debug output
-				//System.out.println("> loaded part "+(i+1)+" of "+info.getParts());
+		for(int i = 0; i<info.getParts(); i++) {
+			switch(info.getSplitMode()) {
+				case DEFAULT:
+					fileBytes = readFile(getPartFile(info.getWorkspace(), i+1));
+					break;
+				case ZIP:
+					fileBytes = unzipPart(getPartFile(info.getWorkspace(), i+1));
+					break;
+				case CRYPTO:
+					fileBytes = uncryptPart(getPartFile(info.getWorkspace(), i+1));
 			}
-			fout.close();
+			if(fileBytes == null) throw new Exception("Impossibile leggere file " + getPartFile(info.getWorkspace(), i+1).getName());
+			buffer.write(fileBytes);
+			//TODO remove debug output
+			//System.out.println("> loaded part "+(i+1)+" of "+info.getParts());
 		}
-		catch(IOException e) {e.printStackTrace();}
+		//Check if a file with the same name already exist in that location
+		if(info.getFile().exists() && info.getFile().isFile())
+			info.setName("merged_"+info.getName());
+
+		writeFile(info.getFile(), buffer.toByteArray());
+		buffer.close();
+	}
+
+	private void writeFile(File file, byte[] bytes) {
+		FileOutputStream fout;
+		try {
+			fout = new FileOutputStream(file);
+			fout.write(bytes);
+			fout.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 

@@ -41,7 +41,7 @@ public class SplitThread extends Thread {
         //TODO add custom exception on split() and remove a file from list only of it has been split correctly
 
         System.out.println("> Calling split procedure ("+splitFile.filenameProperty().get()+")");
-        split = splitter.split(splitFile.getFinalDestPath());
+        split = splitter.split();
 
         //I componenti di JavaFX possono essere modificati solo dal Thread di JavaFX, quindi
         // si utilizza Platform.runLater() che esegue una data procedura quando il thread termina

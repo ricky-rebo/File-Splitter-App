@@ -37,22 +37,21 @@ public class Splitter extends FileDimModifier {
 	 * Split the file pointed in the SplitInfo object, with the specified split options
 	 * @return true if the split procedure works fine, false otherwise
 	 */
-	public boolean split(String saveTo) {
-		File saveDir = new File(saveTo);
+	public boolean split() {
+		File saveDir = new File(info.getWorkspace());
 		if(!saveDir.exists() || !saveDir.isDirectory()) saveDir.mkdir();
 
 		byte[] bytes = readFile(info.getFile());
-		if(bytes == null) {System.out.println("NO BYTES READ");
-		return false;}
+		if(bytes == null) { System.out.println("NO BYTES READ"); return false; }
 
 		List<byte[]> parts = partition(bytes, info.getParts());
 
 		for(int i=0; i<parts.size(); i++) {
 			System.out.println("> Part "+i+" dim: "+parts.get(i).length);
-			writePart(parts.get(i), getPartFile(saveTo, i+1));
+			writePart(parts.get(i), getPartFile(info.getWorkspace(), i+1));
 		}
 
-		info.save(saveTo);
+		info.save();
 		return true;
 	}
 
@@ -73,7 +72,7 @@ public class Splitter extends FileDimModifier {
 
 	private List<byte[]> partition(byte[] bytes, int partsnum) {
 		List<byte[]> parts = new ArrayList<>();
-		int partSize = info.getFileSize() / info.getParts();
+		int partSize = info.getPartSize();
 
 		for(int i=0; i<partsnum; i++) {
 			int dim = ((i==(partsnum-1)) && ((bytes.length%partSize)>0)) ?
