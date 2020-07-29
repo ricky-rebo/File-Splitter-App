@@ -14,7 +14,7 @@ public class ZipSplitter extends Splitter {
 
 
     @Override
-    protected void writePart(byte[] part, File file) {
+    protected void writePart(byte[] part, File file) throws SplitterException {
         ZipOutputStream zos = null;
         try {
             zos = new ZipOutputStream(new FileOutputStream(file));
@@ -23,8 +23,9 @@ public class ZipSplitter extends Splitter {
             zos.closeEntry();
             zos.close();
         }
-        catch(IOException e) {
-            e.printStackTrace();
+        catch(IOException ex) {
+            deleteParts();
+            throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath()+"\n\nFile "+info.getName()+" non diviso", ex);
         }
     }
 }

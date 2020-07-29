@@ -11,7 +11,7 @@ import java.util.List;
  * @author Riccardo Rebottini
  * @version 2.0
  */
-public class Splitter extends FileDimModifier {
+public class Splitter extends FileManipulator {
 	public enum SplitMode {
 		DEFAULT, ZIP, CRYPTO;
 
@@ -37,7 +37,7 @@ public class Splitter extends FileDimModifier {
 	 * Split the file pointed in the SplitInfo object, with the specified split options
 	 * @return true if the split procedure works fine, false otherwise
 	 */
-	public boolean split() {
+	public boolean split() throws SplitterException {
 		File saveDir = new File(info.getWorkspace());
 		if(!saveDir.exists() || !saveDir.isDirectory()) saveDir.mkdir();
 
@@ -56,16 +56,16 @@ public class Splitter extends FileDimModifier {
 	}
 
 
-	protected void writePart(byte[] part, File file) {
+	protected void writePart(byte[] part, File file) throws SplitterException {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(file);
 			fos.write(part);
 			fos.close();
 		}
-		catch(IOException e) {
-			//TODO aggiungere rimozione parti già scritte in caso di errore
-			e.printStackTrace();
+		catch(IOException ex) {
+			deleteParts();
+			throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath()+"\n\nFile \"+info.getName()+\" non diviso", ex);
 		}
 	}
 
@@ -81,5 +81,14 @@ public class Splitter extends FileDimModifier {
 		}
 
 		return parts;
+	}
+
+	protected void deleteParts() {
+		for(int i=0; i<info.getParts(); i++) {
+			File pfile = getPartFile(info.getWorkspace(), i+1);
+			if(pfile.exists() && pfile.isFile())
+				pfile.delete();
+			else return;
+		}
 	}
 }

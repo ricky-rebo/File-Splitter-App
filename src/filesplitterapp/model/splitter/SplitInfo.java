@@ -18,6 +18,7 @@ public class SplitInfo implements Serializable {
     private int parts;
     private SplitMode splitMode;
     private String keyHash = null;
+    private byte[] iv = null; //TODO
 
 
     /**
@@ -44,8 +45,10 @@ public class SplitInfo implements Serializable {
     public int getParts() { return parts; }
     public int getPartSize() { return partsize; }
     public SplitMode getSplitMode() { return splitMode; }
-    public String getKeyHash() { return keyHash; }
     public void setKeyHash(String keyHash) { this.keyHash = keyHash; }
+    public void setIV(byte[] iv) { this.iv = iv; }
+    public String getKeyHash() { return keyHash; }
+    public byte[] getIV() { return iv; }
 
     public String getInfoFilename() {
         return file.getName().substring(0, file.getName().lastIndexOf('.'))+PINFO_EXT;
@@ -73,11 +76,11 @@ public class SplitInfo implements Serializable {
      * @param infoFile il file .pinf da leggere
      * @return un oggetto SplitInfo
      */
-    public static SplitInfo load(File infoFile) throws FileSplitterException {
+    public static SplitInfo load(File infoFile) throws SplitterException {
         if(!infoFile.getName().substring(infoFile.getName().lastIndexOf('.')).equals(PINFO_EXT)) {
             String msg = "Il file selezionato non contiene informazioni su un file diviso.\n" +
                          "Selezionare un file con estensione "+PINFO_EXT+" valido!";
-            throw new FileSplitterException(msg, null);
+            throw new SplitterException(msg, null);
         }
 
         ObjectInputStream getInfo = null;
@@ -90,7 +93,7 @@ public class SplitInfo implements Serializable {
         catch(IOException | ClassNotFoundException ex) {
             String msg = "Impossibile caricare il file\n"+infoFile.toString()+"\n"+
                          "E' possibile che il file sia danneggiato o non valido";
-            throw new FileSplitterException(msg, ex);
+            throw new SplitterException(msg, ex);
         }
 
         obj.setWorkspace(infoFile.getParent());

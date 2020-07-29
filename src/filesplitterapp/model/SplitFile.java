@@ -121,13 +121,6 @@ public class SplitFile {
      * Returns a SplitInfo object
      */
     public SplitInfo getSplitInfo(){
-        SplitInfo obj = new SplitInfo(file, getFinalDestPath(), partsNum.get(), partSize.get(), splitMode.get());
-
-        //Calc key hash, if splitMode == CRYPTED
-        if(splitMode.get()==SplitMode.CRYPTO) {
-            obj.setKeyHash(Util.calcMD5(cryptKey.getBytes()));
-        }
-
-        return obj;
+        return new SplitInfo(file, getFinalDestPath(), partsNum.get(), partSize.get(), splitMode.get());
     }
 }

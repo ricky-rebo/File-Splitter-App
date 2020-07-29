@@ -27,13 +27,13 @@ public class Util {
         alert.showAndWait();
 	}
 
+	//TODO remove
 	public static String calcMD5(byte[] bytes) {
 		MessageDigest md = null;
 		try {
 			md = MessageDigest.getInstance("MD5");
 			md.update(bytes);
-			return DatatypeConverter
-					.printHexBinary(md.digest()).toUpperCase();
+			return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
 		}
 		catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
@@ -52,6 +52,7 @@ public class Util {
 		return selPath == null ? null : selPath.getAbsolutePath();
 	}
 
+	//TODO remove
 	public static String remExt(String name) {
 		return name.substring(0, name.lastIndexOf('.'));
 	}

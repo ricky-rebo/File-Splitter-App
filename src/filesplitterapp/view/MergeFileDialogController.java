@@ -1,8 +1,6 @@
 package filesplitterapp.view;
 
-import filesplitterapp.model.splitter.FileMerger;
-import filesplitterapp.model.splitter.FileSplitterException;
-import filesplitterapp.model.splitter.SplitInfo;
+import filesplitterapp.model.splitter.*;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
 
 import filesplitterapp.util.Util;
@@ -88,7 +86,7 @@ public class MergeFileDialogController {
             tmp = SplitInfo.load(file);
             setInfo(file, tmp);
             return true;
-        } catch (FileSplitterException ex) {
+        } catch (SplitterException ex) {
             Util.throwAlert(AlertType.ERROR, "File Splitter - ERROR", "File non caricato!", ex.getMessage());
             return false;
         }
@@ -126,9 +124,15 @@ public class MergeFileDialogController {
 
     @FXML
     private void handleMerge() {
-        FileMerger merger;
+        Merger merger;
         try {
-            merger = new FileMerger(info, txtKey.getText());
+            switch(info.getSplitMode()) {
+                case DEFAULT: merger = new Merger(info); break;
+                case ZIP: merger = new ZipMerger(info); break;
+                case CRYPTO: merger = new CryptoMerger(info, txtKey.getText()); break;
+                default: return; //TODO add error handling
+            }
+            //Se la destinazione del file è stata cambiata nel form, viene cambiata anche nel'oggetto info
             if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
             try { merger.merge(); }
             catch(Exception ex) { Util.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
