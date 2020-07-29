@@ -16,8 +16,8 @@ import java.util.zip.ZipOutputStream;
  */
 public class ZipSplitter extends Splitter {
     /**
-     * Cre un nuovo oggetto {@code ZipSplitter.
-     * }
+     * Cre un nuovo oggetto {@code ZipSplitter}
+     *
      * @param infos lo {@code SplitInfo} contenente il file da dividere e le relative impostazioni di divisione
      */
     public ZipSplitter(SplitInfo infos) {

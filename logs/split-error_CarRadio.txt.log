@@ -1,0 +1,10 @@
+filesplitterapp.model.splitter.SplitterException: Impossibile dividere file C:\Users\ricky\eclipse-workspace\FileSeparator\test-files\CarRadio.txt
+	at filesplitterapp.model.splitter.Splitter.split(Splitter.java:61)
+	at filesplitterapp.model.SplitThread.run(SplitThread.java:57)
+Caused by: java.io.FileNotFoundException: C:\Users\ricky\eclipse-workspace\FileSeparator\test-files\CarRadio.txt (Impossibile trovare il file specificato)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at filesplitterapp.model.splitter.FileManipulator.readFile(FileManipulator.java:81)
+	at filesplitterapp.model.splitter.Splitter.split(Splitter.java:42)
+	... 1 more

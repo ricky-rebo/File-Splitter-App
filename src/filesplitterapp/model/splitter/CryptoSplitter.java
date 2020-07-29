@@ -29,17 +29,16 @@ public class CryptoSplitter extends Splitter implements Securable {
      */
     public CryptoSplitter(SplitInfo infos, String passwd) throws SplitterException {
         super(infos);
-        info.setKeyHash(passwd.getBytes());
 
         try {
-            cipher = getCipher(passwd.getBytes());
+            cipher = getCipher(info.setKeyHash(passwd.getBytes()));
         } catch (SecurableException ex) {
             throw new SplitterException("Impossibile dividere il file "+info.getFile().getAbsolutePath(), ex);
         }
 
     }
 
-    //Ritorna true se il nome del file assato corrisponde al nome dell'ultima parte
+    //Ritorna true se il nome del file passato corrisponde al nome dell'ultima parte
     //Utilizzato da writeFile() per decidere se usare cipher.update() o cipher.doFinal()
     private boolean isLastPart(String pname) {
         int pnum = Integer.parseInt(pname.substring(pname.lastIndexOf('.')+4));

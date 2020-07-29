@@ -1,0 +1,20 @@
+filesplitterapp.model.splitter.SplitterException: Impossibile dividere il file C:\Users\ricky\eclipse-workspace\FileSeparator\test-files\_CarRadio.txt
+	at filesplitterapp.model.splitter.CryptoSplitter.<init>(CryptoSplitter.java:37)
+	at filesplitterapp.model.SplitThread.run(SplitThread.java:52)
+Caused by: filesplitterapp.model.splitter.SecurableException: Impossibile ottenere un'istanza di Cipher
+	at filesplitterapp.model.splitter.Securable$Private.getCipher(Securable.java:67)
+	at filesplitterapp.model.splitter.Securable$Private.access$000(Securable.java:53)
+	at filesplitterapp.model.splitter.Securable.getCipher(Securable.java:35)
+	at filesplitterapp.model.splitter.CryptoSplitter.<init>(CryptoSplitter.java:35)
+	... 1 more
+Caused by: java.security.InvalidKeyException: Invalid AES key length: 4 bytes
+	at com.sun.crypto.provider.AESCrypt.init(AESCrypt.java:87)
+	at com.sun.crypto.provider.CipherBlockChaining.init(CipherBlockChaining.java:93)
+	at com.sun.crypto.provider.CipherCore.init(CipherCore.java:591)
+	at com.sun.crypto.provider.AESCipher.engineInit(AESCipher.java:346)
+	at javax.crypto.Cipher.implInit(Cipher.java:805)
+	at javax.crypto.Cipher.chooseProvider(Cipher.java:863)
+	at javax.crypto.Cipher.init(Cipher.java:1395)
+	at javax.crypto.Cipher.init(Cipher.java:1326)
+	at filesplitterapp.model.splitter.Securable$Private.getCipher(Securable.java:63)
+	... 4 more

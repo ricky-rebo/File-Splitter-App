@@ -95,13 +95,16 @@ public class SplitInfo implements Serializable {
     /** Ritorna la modalità in cui il file è stato/deve essere diviso */
     public SplitMode getSplitMode() { return splitMode; }
 
-    ///** Imposta l'hash della chiave utilizzata per criptare il file (in caso si utilizzi {@code CryptoSplitter}) */
-    //public String getKeyHash() { return keyHash; }
-    /** Ritorna l'hash della chiave utilizzata per criptare il file (in caso si utilizzi {@code CryptoSplitter}) */
-    public void setKeyHash(byte[] pswBytes) throws SplitterException {
+    /**
+     * Imposta l'hash della chiave utilizzata per criptare il file (in caso si utilizzi {@code CryptoSplitter})
+     *
+     * @return la chiave generata dalla password passata alla funzione
+     */
+    public byte[] setKeyHash(byte[] pswBytes) throws SplitterException {
         try {
             String key = calcHash(pswBytes);
             this.keyHash = calcHash(key.getBytes());
+            return key.getBytes();
         } catch (NoSuchAlgorithmException ex) {
             throw new SplitterException("Impossibile generare l'hash della chiave fornita.", ex);
         }
@@ -113,12 +116,12 @@ public class SplitInfo implements Serializable {
     /** Imposta il parametro {@code IV} utilizzato dal {@code Cipher} in fase di cifratura del file */
     public void setIV(byte[] iv) { this.iv = iv; }
 
+
     private String getInfoFilename() {
         return file.getName().substring(0, file.getName().lastIndexOf('.'))+PINFO_EXT;
     }
 
-    ///** Ritorna l'hash del file */
-    //private String getFileHash() { return fileHash; }
+
     /** Imposta l'hash del file */
     public void setFileHash(byte[] content) throws SplitterException {
         try {
@@ -148,13 +151,15 @@ public class SplitInfo implements Serializable {
     /**
      * Confronta una chiave con quella memorizzata.
      *
+     * @return la chiave di cifratura in formato byte array se la password passata è corretta
      * @throws InvalidKeyException in caso le due chiavi non siano uguali
      */
-    public void verifyKey(byte[] pswBytes) throws InvalidKeyException, SplitterException {
+    public byte[] verifyKey(byte[] pswBytes) throws InvalidKeyException, SplitterException {
         try {
             String key = calcHash(pswBytes);
             if (!calcHash(key.getBytes()).equals(keyHash))
                 throw new InvalidKeyException("Chiave inserita non valida!");
+            else return key.getBytes();
         } catch (NoSuchAlgorithmException ex) {
             throw new SplitterException("Impossibile verificare la chiave fornita.", ex);
         }
@@ -224,6 +229,4 @@ public class SplitInfo implements Serializable {
         obj.setFileLocation(infoFile.getParent());
         return obj;
     }
-
-
 }

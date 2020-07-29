@@ -49,7 +49,6 @@ public class SplitThread extends Thread {
                     splitter = new ZipSplitter(splitFile.getSplitInfo());
                     break;
                 case CRYPTO:
-                    System.out.println("> Crypto Case");
                     splitter = new CryptoSplitter(splitFile.getSplitInfo(), splitFile.getCryptKey());
                     break;
                 default:
@@ -62,8 +61,8 @@ public class SplitThread extends Thread {
         }
 
         // Chiamata alla funzione di callback
-        //Visto che i componenti "live" di JavaFX possono essere manipolati solo da thread di JavaFX stesso, viene rimandata
-        //a Platform.runLater() la chiamata alla funzione di callback, che la esegue non appena questo thread finisce la sua esecuzione
+        // Visto che i componenti "live" di JavaFX possono essere manipolati solo da thread di JavaFX stesso, viene rimandata
+        // a Platform.runLater() la chiamata alla funzione di callback, che la esegue non appena questo thread finisce la sua esecuzione
         Platform.runLater(() -> callback.run());
     }
 

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="FileSplitterApp:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/FileSplitterApp_jar</output-path>
+    <root id="archive" name="FileSplitterApp.jar">
+      <element id="module-output" name="FileSplitterApp" />
+    </root>
+  </artifact>
+</component>

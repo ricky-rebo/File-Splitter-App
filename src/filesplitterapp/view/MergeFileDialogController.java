@@ -151,36 +151,6 @@ public class MergeFileDialogController {
 
         if(mainApp.mergeFile(info, txtKey.getText(), chkDeleteFiles.isSelected()))
             dialogStage.close();
-
-        /*Merger merger;
-        try {
-            switch(info.getSplitMode()) {
-                case DEFAULT: merger = new Merger(info); break;
-                case ZIP: merger = new ZipMerger(info); break;
-                case CRYPTO: merger = new CryptoMerger(info, txtKey.getText()); break;
-                default: return;
-            }
-
-            //Chiamata alla procedura di merge
-            merger.merge();
-
-
-            if(chkDeleteFiles.isSelected()) {
-                merger.deleteParts();
-                info.deleteInfoFile();
-            }
-
-            mainApp.throwAlert(AlertType.INFORMATION, "Merge File", "File ricomposto correttamente",
-                    "Il file "+info.getName()+" è stato ricomposto correttamente.");
-            dialogStage.close();
-        }
-        catch (InvalidKeyException ex) {
-            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", ex.getMessage());
-        }
-        catch (SplitterException ex) {
-            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", ex.getMessage());
-            ex.printStackTrace();
-        }*/
     }
 
 

@@ -39,7 +39,7 @@ public abstract class FileManipulator {
 
     /**
     * Ritorna il file contenente il percorso assoluto della i-esima parte, composto dal percorso
-    * SplitInfo.workspace + il nome del file completo + l'estensione .par + il numero di parte (1~n)
+    * SplitInfo.workspace + il nome del file completo + {@value #PART_EXT} + il numero di parte (1~n)
     */
     protected File getPartFile(String dest, int i) {
         String filename = info.getName();
@@ -50,6 +50,9 @@ public abstract class FileManipulator {
     /**
      * Cancella tutte le parti già scritte su disco. Appena raggiunge il
      * numero di parti o riscontra un file non esistente si interrompe.
+     * <p>
+     * Questo metodo viene utilizato dai {@code Merger} per eventualmente eliminare le parti, se il file viene unito correttamente,
+     * oppure dagli {@code Splitter} per eliminare le parti già scritte, se si riscontrano errori nella scrittura di una di esse.
      */
     public void deleteParts() {
         for(int i = 0; i<info.getPartsNum(); i++) {

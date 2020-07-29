@@ -101,7 +101,7 @@ public class EditFileDialogController {
 		comboSplitMode.getSelectionModel().select(splitFile.getSplitMode());
 
 		txtDestPath.setText(splitFile.getDestPath());
-		chkSaveToSubDir.setSelected(splitFile.saveToSubDir());
+		chkSaveToSubDir.setSelected(splitFile.useSubDir());
 
 		rbPartSize.setSelected(true);
 		if(splitFile.getCryptKey() != null) txtKey.setText(splitFile.getCryptKey());

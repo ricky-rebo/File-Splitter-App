@@ -40,7 +40,7 @@
                     </buttons>
                   </ButtonBar>
                   <Button fx:id="btnSplit" layoutX="723.0" layoutY="66.0" mnemonicParsing="false" onAction="#handleSplitFiles" prefHeight="31.0" prefWidth="86.0" text="Dividi File" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-                  <Button layoutX="723.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleMergeFiles" text="Unisci File" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="10.0" />
+                  <Button layoutX="723.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleMergeFiles" prefHeight="31.0" prefWidth="86.0" text="Unisci File" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="10.0" />
                   <ProgressBar fx:id="progressbar" layoutX="10.0" layoutY="95.0" prefHeight="31.0" prefWidth="708.0" progress="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="110.0" />
                   <Label fx:id="lblProgress" layoutX="10.0" layoutY="60.0" text="Label" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" />
                </children>

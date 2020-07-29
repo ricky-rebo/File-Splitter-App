@@ -44,7 +44,7 @@ import java.security.InvalidKeyException;
  */
 public class MainApp extends Application {
 	/** Percorso in cui salvare i file di log */
-	public static final String LOG_PATH = System.getProperty("user.home") + File.separator + "FileSplitterApp" + File.separator + "logs";
+	public static final String LOG_DIR = "logs";
 
 	private Stage primaryStage;
 	private ObservableList<SplitFile> fileList = FXCollections.observableArrayList();
@@ -74,7 +74,7 @@ public class MainApp extends Application {
 		this.primaryStage.getIcons().add(new Image("file:resources/images/icon-512.png"));
 
 		//Creo la cartella di log dell'applicazione, se non esiste già, all'interno della cartella utente
-		File logLoc = new File(LOG_PATH);
+		File logLoc = new File(LOG_DIR);
 		if(!logLoc.exists() || !logLoc.isDirectory())
 			logLoc.mkdirs();
 
@@ -101,7 +101,7 @@ public class MainApp extends Application {
 			//Visualizza il primaryStage
 			primaryStage.show();
 
-			//Ottiene l'istanza del controller e gli fornisce un riferimenso all'applicazione stessa
+			//Ottiene l'istanza del controller e gli fornisce un riferimento all'applicazione stessa
 			homeController = loader.getController();
 			homeController.setMainApp(this);
 		}
@@ -261,7 +261,7 @@ public class MainApp extends Application {
 	 */
 	public void logError(String fname, Exception ex) {
 		try {
-			ex.printStackTrace(new PrintStream(new FileOutputStream(new File(LOG_PATH, fname+".log"))));
+			ex.printStackTrace(new PrintStream(new FileOutputStream(new File(LOG_DIR, fname+".log"))));
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();

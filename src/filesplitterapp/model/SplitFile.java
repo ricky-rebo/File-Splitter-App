@@ -23,7 +23,7 @@ import java.io.File;
 public class SplitFile {
     private final File file;
     private String cryptKey = null;
-    private boolean saveToSubDir = false;
+    private boolean useSubDir = false;
     private boolean specsParts = false;
 
     private ObjectProperty<SplitMode> splitMode;
@@ -51,20 +51,20 @@ public class SplitFile {
     /** Ritorna il percorso assoluto del file da dividere */
     public String getAbsoluteFilename() { return file.getAbsolutePath(); }
 
-    /** Imposta il percorso in cui salvare le parti del file fiviso */
-    public void setDestPath(String path, boolean includeSubDir) {
-        saveToSubDir = includeSubDir;
+    /** Imposta il percorso in cui salvare le parti del file diviso */
+    public void setDestPath(String path, boolean useSubDir) {
+        this.useSubDir = useSubDir;
         destPath.set(path);
     }
     /** Ritorna il percorso in cui salvare le parti del file diviso */
     public String getDestPath() { return destPath.get(); }
 
-    /** Ritorna il percorso in cui salvare le parti del file diviso, includendo la subdirectory "[nome_file]_parts" se saveToSubDir = true */
+    /** Ritorna il percorso in cui salvare le parti del file diviso, includendo la subdirectory "[nome_file]_parts" se UseSubDir = true */
     public String getFinalDestPath() {
-        return destPath.get() + (saveToSubDir ? File.separator+file.getName().substring(0, file.getName().lastIndexOf('.'))+"_parts" : "");
+        return destPath.get() + (useSubDir ? File.separator+file.getName().substring(0, file.getName().lastIndexOf('.'))+"_parts" : "");
     }
     /** Specifica se è stato impostato di salvare le parti in una subdirectory o meno */
-    public boolean saveToSubDir() { return saveToSubDir; }
+    public boolean useSubDir() { return useSubDir; }
 
     // splitMode
     /** Imposta la modalità in cui dividere il file */
@@ -78,7 +78,7 @@ public class SplitFile {
         partSize.set(size);
         specsParts = false;
 
-        int pnum = (int)file.length() / size;
+        int pnum = (int) (file.length() / size);
         if (((int)file.length() % size) > 0) pnum++;
         partsNum.set(pnum);
     }
@@ -91,7 +91,7 @@ public class SplitFile {
         partsNum.set(pnum);
         specsParts = true;
 
-        int psize = (int)file.length() / pnum;
+        int psize = (int) (file.length() / pnum);
         if (((int)file.length() % psize) > 0) psize++;
         partSize.set(psize);
     }
@@ -126,7 +126,7 @@ public class SplitFile {
         if(specsParts) copy.setPartsNum(partsNum.get());
         else copy.setPartSize(partSize.get());
 
-        copy.setDestPath(destPath.get(), saveToSubDir);
+        copy.setDestPath(destPath.get(), useSubDir);
         copy.setCryptKey(cryptKey);
         return copy;
     }

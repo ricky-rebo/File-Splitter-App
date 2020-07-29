@@ -54,7 +54,7 @@ public class HomeController {
 
 	/**
 	 * Costruttore base.<br>
-	 * NOTA: L'inizializzazione vera e propria non avviene qui, ma nel metodo privato {@code initialize()}, che<br>
+	 * NOTA: L'inizializzazione vera e propria non avviene qui, ma nel metodo privato {@code initialize()}, che
 	 * viene chiamato automaticamente dopo che il file fxml è stato caricato.
 	 */
 	public HomeController() {}
@@ -241,45 +241,6 @@ public class HomeController {
 	@FXML
 	private void handleSplitFiles() {
 		mainApp.splitFiles();
-
-		/*int listDim = mainApp.getFileList().size();
-		SplitThread threads[] = new SplitThread[listDim];
-		String failed = "";
-		resetProgress(listDim);
-
-		//Creazione threads
-		for(int i=0; i<listDim; i++) {
-			threads[i] = new SplitThread(mainApp.getFileList().get(i), () -> this.incProgress());
-			threads[i].start();
-		}
-
-		//Join per attendere che tutti abbiano finito
-		for(int i=0; i<listDim; i++) {
-			try { threads[i].join(); }
-			catch (InterruptedException ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		//Rimozione file completati o eventuale segnalazione errori
-		for(int i=0; i<listDim; i++) {
-			if(threads[i].isSplit())
-				mainApp.getFileList().remove(threads[i].getSplitFile());
-			else {
-				String fname = threads[i].getSplitFile().filenameProperty().get();
-				failed += "- " + fname + "\n";
-				mainApp.logError("split_"+fname, threads[i].getException());
-			}
-		}
-
-		if(failed.length() == 0)
-			mainApp.throwAlert(AlertType.INFORMATION, "Split Files", "Operazione completata",
-					"Tutti i file sono stati divisi con successo.");
-		else
-			mainApp.throwAlert(AlertType.WARNING, "Split Files", "Attenzione",
-					"I seguenti file non sono stati divisi:\n\n"+failed);
-
-		enableAllButtons(!mainApp.getFileList().isEmpty());*/
 	}
 
 

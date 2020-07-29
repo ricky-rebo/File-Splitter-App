@@ -37,7 +37,7 @@ public class Merger extends FileManipulator {
 				buffer.write(fileBytes);
 			}
 
-			//Se un file con lo stesso nome esiste fià, rinomino il file unito
+			//Se un file con lo stesso nome esiste già, rinomino il file unito
 			if(info.getFile().exists() && info.getFile().isFile())
 				info.setName("merged_"+info.getName());
 

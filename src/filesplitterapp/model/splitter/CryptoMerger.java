@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 
 /**
- * {@code ZipMerger} estende {@code Merger}, implementando la lettura di parti in formato crittografato.
+ * {@code CryptoMerger} estende {@code Merger}, implementando la lettura di parti in formato crittografato.
  * <p>
  * Questa funzionalità si ottiene facendo un override di {@code readFile()} di {@code FileManipulator}. In questo modo la procedura <br>
  * di merge definita in {@code Merger} non cambia, ma viene modificato solo il modo in cui vengono lette le parti.
@@ -32,9 +32,8 @@ public class CryptoMerger extends Merger implements Securable {
     public CryptoMerger(SplitInfo info, String passwd) throws InvalidKeyException, SplitterException {
         super(info);
 
-        info.verifyKey(passwd.getBytes());
         try {
-            cipher = getDecipher(passwd.getBytes(), new IvParameterSpec(info.getIV()));
+            cipher = getDecipher(info.verifyKey(passwd.getBytes()), new IvParameterSpec(info.getIV()));
         }
         catch (SecurableException ex) {
             throw new SplitterException("Impossibile unire il file "+info.getName(), ex);
@@ -45,7 +44,6 @@ public class CryptoMerger extends Merger implements Securable {
     //Utilizzato da writeFile() per decidere se usare cipher.update() o cipher.doFinal()
     private boolean isLastPart(String pname) {
         int pnum = Integer.parseInt(pname.substring(pname.lastIndexOf('.')+4));
-        //System.out.println("> extracted num: "+pnum+"\n> parts num: "+info.getPartsNum());
         return pnum == info.getPartsNum();
     }
 
