@@ -1,7 +1,7 @@
 package filesplitterapp;
 
 import filesplitterapp.model.SplitFile;
-import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
 import filesplitterapp.view.EditFileDialogController;
 import filesplitterapp.view.HomeController;
 import filesplitterapp.view.MergeFileDialogController;
@@ -33,9 +33,15 @@ public class MainApp extends Application {
 	 * Adds some dummy data, just for test.
 	 */
 	public MainApp() {
-		fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\TEOTFW.png"), SplitMode.DEFAULT));
-		fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\CarRadio.txt"), SplitMode.ZIP));
-		fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\CarRadio_merged.txt"), SplitMode.CRYPTED));
+		//fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\TEOTFW.png"), SplitMode.DEFAULT));
+		//fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\CarRadio.txt"), SplitMode.ZIP));
+		//fileList.add(new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\CarRadio_merged.txt"), SplitMode.CRYPTO));
+
+		SplitFile file = new SplitFile(new File("C:\\Users\\ricky\\eclipse-workspace\\FileSeparator\\test-files\\CarRadio.txt"), SplitMode.CRYPTO);
+		file.setCryptKey("test");
+		file.setDestPath("C:\\Users\\ricky\\Desktop\\split_files\\new_crypto", true);
+		file.setPartsNum(3);
+		fileList.add(file);
 	}
 
 

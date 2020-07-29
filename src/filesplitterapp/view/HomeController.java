@@ -3,7 +3,7 @@ package filesplitterapp.view;
 import filesplitterapp.MainApp;
 import filesplitterapp.model.SplitFile;
 import filesplitterapp.model.SplitThread;
-import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
 import filesplitterapp.util.Util;
 import javafx.application.Platform;
 import javafx.fxml.FXML;

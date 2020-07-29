@@ -1,7 +1,7 @@
 package filesplitterapp.model;
 
 import filesplitterapp.model.splitter.SplitInfo;
-import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
 import filesplitterapp.util.Util;
 import javafx.beans.property.*;
 
@@ -47,7 +47,7 @@ public class SplitFile {
         this.file = file;
 
         destPath = new SimpleStringProperty(file.getParent());
-        splitMode = new SimpleObjectProperty<SplitMode>(mode);
+        splitMode = new SimpleObjectProperty<>(mode);
         partsNum = new SimpleIntegerProperty(1);
         partSize = new SimpleIntegerProperty((int)file.length());
         cryptKey = null;
@@ -122,7 +122,7 @@ public class SplitFile {
         SplitInfo obj = new SplitInfo(file, partsNum.get(), splitMode.get());
 
         //Calc key hash, if splitMode == CRYPTED
-        if(splitMode.get()==SplitMode.CRYPTED) {
+        if(splitMode.get()==SplitMode.CRYPTO) {
             obj.setKeyHash(Util.calcMD5(cryptKey.getBytes()));
         }
 

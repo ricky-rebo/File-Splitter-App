@@ -3,7 +3,8 @@ package filesplitterapp.view;
 import filesplitterapp.model.splitter.FileMerger;
 import filesplitterapp.model.splitter.FileSplitterException;
 import filesplitterapp.model.splitter.SplitInfo;
-import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
+
 import filesplitterapp.util.Util;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -104,7 +105,7 @@ public class MergeFileDialogController {
         lblSplitMode.setText(info.getSplitMode().toString());
         lblParts.setText((""+info.getParts()));
 
-        if(info.getSplitMode() == SplitMode.CRYPTED)
+        if(info.getSplitMode() == SplitMode.CRYPTO)
             showKeyField(true);
     }
 
@@ -128,7 +129,8 @@ public class MergeFileDialogController {
         FileMerger merger;
         try {
             merger = new FileMerger(info, txtKey.getText());
-            merger.merge(txtSaveTo.getText());
+            try { merger.merge(txtSaveTo.getText()); }
+            catch(Exception ex) { Util.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
 
             if(chkDeleteFiles.isSelected())
                 merger.deletePartFiles();

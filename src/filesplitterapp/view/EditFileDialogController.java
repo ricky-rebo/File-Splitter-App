@@ -1,7 +1,7 @@
 package filesplitterapp.view;
 
 import filesplitterapp.model.SplitFile;
-import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
 import filesplitterapp.util.Util;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -42,7 +42,7 @@ public class EditFileDialogController {
 		//Add a listener on the combo selected value
 		//If CRYPTED mode selected show the key field
 		comboSplitMode.valueProperty().addListener((observable, oldVal, newVal) -> {
-			boolean crypt = (newVal == SplitMode.CRYPTED) ? true : false;
+			boolean crypt = (newVal == SplitMode.CRYPTO) ? true : false;
 			lblKey.setVisible(crypt);
 			txtKey.setVisible(crypt);
 		});

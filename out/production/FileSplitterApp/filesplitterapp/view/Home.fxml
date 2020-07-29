@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="500.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="filesplitterapp.view.HomeController">
+   <children>
+      <SplitPane fx:id="splitPane" dividerPositions="0.7" layoutX="240.0" layoutY="198.0" orientation="VERTICAL" prefHeight="500.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <TableView fx:id="fileTable" prefHeight="345.0" prefWidth="798.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="fileCol" prefWidth="166.0" text="File" />
+                        <TableColumn fx:id="modeCol" prefWidth="115.0" text="Split Mode" />
+                        <TableColumn fx:id="sizeCol" prefWidth="107.0" text="Size" />
+                        <TableColumn fx:id="nPartsCol" prefWidth="101.0" text="N° Parti" />
+                        <TableColumn fx:id="destCol" prefWidth="100.0" text="Destinazione" />
+                    </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <ButtonBar layoutX="130.0" layoutY="14.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="474.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                    <buttons>
+                        <Button mnemonicParsing="false" onAction="#handleRemoveAll" text="Rimuovi tutti" />
+                      <Button mnemonicParsing="false" onAction="#handleRemove" prefWidth="107.0" text="Rimuovi" />
+                        <Button mnemonicParsing="false" onAction="#handleEdit" text="Modifica" />
+                        <Button mnemonicParsing="false" onAction="#handleAdd" text="Aggiungi file" />
+                    </buttons>
+                  </ButtonBar>
+                  <Button layoutX="723.0" layoutY="66.0" mnemonicParsing="false" onAction="#handleSplitFiles" prefHeight="31.0" prefWidth="86.0" text="Dividi File" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+                  <Button layoutX="723.0" layoutY="30.0" mnemonicParsing="false" onAction="#handleMergeFiles" text="Unisci File" AnchorPane.bottomAnchor="50.0" AnchorPane.rightAnchor="10.0" />
+                  <ProgressBar fx:id="progressbar" layoutX="10.0" layoutY="95.0" prefHeight="31.0" prefWidth="708.0" progress="0.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="110.0" />
+                  <Label fx:id="lblProgress" layoutX="10.0" layoutY="60.0" text="Label" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="10.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

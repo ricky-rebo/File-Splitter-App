@@ -1,8 +1,8 @@
 package filesplitterapp.model;
 
-import filesplitterapp.model.splitter.CryptFileSplitter;
-import filesplitterapp.model.splitter.FileSplitter;
-import filesplitterapp.model.splitter.ZipFileSplitter;
+import filesplitterapp.model.splitter.CryptoSplitter;
+import filesplitterapp.model.splitter.Splitter;
+import filesplitterapp.model.splitter.ZipSplitter;
 import filesplitterapp.view.HomeController;
 
 public class SplitThread extends Thread {
@@ -20,26 +20,32 @@ public class SplitThread extends Thread {
     @Override
     public void run() {
         //System.out.println("THREAD LAUNCHED");
-        FileSplitter splitter = null;
+        Splitter splitter = null;
         switch(splitFile.getSplitMode()) {
             case DEFAULT:
-                splitter = new FileSplitter(splitFile.getSplitInfo());
+                splitter = new Splitter(splitFile.getSplitInfo());
                 break;
             case ZIP:
-                splitter = new ZipFileSplitter(splitFile.getSplitInfo());
+                splitter = new ZipSplitter(splitFile.getSplitInfo());
                 break;
-            case CRYPTED:
-                splitter = new CryptFileSplitter(splitFile.getSplitInfo(), splitFile.getCryptKey());
+            case CRYPTO:
+                System.out.println("> Crypto Case");
+                splitter = new CryptoSplitter(splitFile.getSplitInfo(), splitFile.getCryptKey());
+                break;
             default:
                 return;
         }
 
+        if(splitter == null) { System.out.println("> Error, "+splitter.getClass()+" is null!"); return; }
+
         //TODO add custom exception on split() and remove a file from list only of it has been split correctly
 
+        System.out.println("> Calling split procedure ("+splitFile.filenameProperty().get()+")");
         split = splitter.split(splitFile.getFinalDestPath());
 
         //I componenti di JavaFX possono essere modificati solo dal Thread di JavaFX, quindi
-        // Usiamo Platform.runLater()
+        // si utilizza Platform.runLater() che esegue una data procedura quando il thread termina
+        // la sua esecuzione
         callback.run();
     }
 

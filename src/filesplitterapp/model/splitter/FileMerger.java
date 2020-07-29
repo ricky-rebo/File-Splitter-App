@@ -1,6 +1,7 @@
 package filesplitterapp.model.splitter;
 
 import filesplitterapp.util.Util;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -11,7 +12,6 @@ import java.io.*;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
@@ -20,12 +20,13 @@ import java.util.zip.ZipInputStream;
  */
 public class FileMerger extends FileDimModifier {
 	private byte[] keyBytes = null;
+	private Cipher cipher;
 
 	//TODO docs
 	public FileMerger(SplitInfo info, String key) throws InvalidKeyException  {
 		super(info);
 
-		if(info.getSplitMode() == SplitMode.CRYPTED) {
+		if(info.getSplitMode() == SplitMode.CRYPTO) {
 			//Inserted key check
 			String keyHash = Util.calcMD5(key.getBytes());
 			if(!keyHash.equals(info.getKeyHash()))
@@ -33,11 +34,20 @@ public class FileMerger extends FileDimModifier {
 
 			keyBytes = key.getBytes();
 			if(keyBytes.length < 32) keyBytes = Arrays.copyOf(keyBytes, 32);
+			System.out.println("> Merger keyBytes lenght: "+keyBytes.length);
+
+			try {cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");}
+			catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {ex.printStackTrace();}
+
+			// Transformation of the algorithm
+			//TODO add key check
+			try {cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyBytes, "AES"));}
+			catch (InvalidKeyException e1) {e1.printStackTrace();}
 		}
 	}
 
 	//TODO docs
-	public void merge(String saveTo){
+	public void merge(String saveTo) throws Exception {
 		FileOutputStream fout = null;
 		byte[] fileBytes = null;
 
@@ -62,9 +72,10 @@ public class FileMerger extends FileDimModifier {
 					case ZIP:
 						fileBytes = unzipPart(getPartFile(partLocation, i+1));
 						break;
-					case CRYPTED:
+					case CRYPTO:
 						fileBytes = uncryptPart(getPartFile(partLocation, i+1));
 				}
+				if(fileBytes == null) throw new Exception("Impossibile leggere file " + getPartFile(partLocation, i+1).getName());
 				fout.write(fileBytes);
 				//TODO remove debug output
 				//System.out.println("> loaded part "+(i+1)+" of "+info.getParts());
@@ -99,20 +110,7 @@ public class FileMerger extends FileDimModifier {
 
 
 	private byte[] uncryptPart(File file) {
-		// Create Cipher instance and initialize it to encryption mode
-        Cipher cipher = null;
-		try {cipher = Cipher.getInstance("AES");}
-		catch (NoSuchAlgorithmException | NoSuchPaddingException ex) {ex.printStackTrace();}
-
-		// Transformation of the algorithm
-		//TODO add key check
-        try {cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyBytes, "AES"));}
-        catch (InvalidKeyException e1) {e1.printStackTrace();}
-
-        try {return cipher.doFinal(readFile(file));}
-        catch (IllegalBlockSizeException | BadPaddingException e) {e.printStackTrace();}
-
-        return null;
+        return cipher.update(readFile(file));
 	}
 
 

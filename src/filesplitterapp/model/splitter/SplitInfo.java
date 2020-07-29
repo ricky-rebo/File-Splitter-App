@@ -1,6 +1,8 @@
 package filesplitterapp.model.splitter;
 
 import java.io.*;
+import filesplitterapp.model.splitter.Splitter.SplitMode;
+
 
 //TODO docs
 public class SplitInfo implements Serializable {
