@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ZipMerger extends Merger {
@@ -13,7 +12,7 @@ public class ZipMerger extends Merger {
     }
 
     @Override
-    protected byte[] readPart(File file) throws SplitterException {
+    protected byte[] readFile(File file) throws SplitterException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[BUFFER_SIZE];
         int len;

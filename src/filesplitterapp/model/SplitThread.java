@@ -1,14 +1,10 @@
 package filesplitterapp.model;
 
-import filesplitterapp.model.splitter.CryptoSplitter;
-import filesplitterapp.model.splitter.Splitter;
-import filesplitterapp.model.splitter.SplitterException;
-import filesplitterapp.model.splitter.ZipSplitter;
+import filesplitterapp.model.splitter.*;
 import filesplitterapp.view.HomeController;
 
 public class SplitThread extends Thread {
     private SplitFile splitFile;
-    private HomeController controller;
     private Runnable callback;
 
     private boolean split= false;
@@ -21,28 +17,27 @@ public class SplitThread extends Thread {
     @Override
     public void run() {
         //System.out.println("THREAD LAUNCHED");
-        Splitter splitter = null;
-        switch(splitFile.getSplitMode()) {
-            case DEFAULT:
-                splitter = new Splitter(splitFile.getSplitInfo());
-                break;
-            case ZIP:
-                splitter = new ZipSplitter(splitFile.getSplitInfo());
-                break;
-            case CRYPTO:
-                System.out.println("> Crypto Case");
-                splitter = new CryptoSplitter(splitFile.getSplitInfo(), splitFile.getCryptKey());
-                break;
-            default:
-                return;
-        }
-
+        Splitter splitter;
         //TODO add custom exception on split() and remove a file from list only of it has been split correctly
 
-        System.out.println("> Calling split procedure ("+splitFile.filenameProperty().get()+")");
+        //System.out.println("> Calling split procedure ("+splitFile.filenameProperty().get()+")");
         try {
+            switch(splitFile.getSplitMode()) {
+                case DEFAULT:
+                    splitter = new Splitter(splitFile.getSplitInfo());
+                    break;
+                case ZIP:
+                    splitter = new ZipSplitter(splitFile.getSplitInfo());
+                    break;
+                case CRYPTO:
+                    System.out.println("> Crypto Case");
+                    splitter = new CryptoSplitter(splitFile.getSplitInfo(), splitFile.getCryptKey());
+                    break;
+                default:
+                    return;
+            }
             split = splitter.split();
-        } catch (SplitterException e) {
+        } catch (SplitterException | SecurableException e) {
             e.printStackTrace(); //TODO add proper error handling
         }
 

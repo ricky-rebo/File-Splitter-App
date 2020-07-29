@@ -1,20 +1,16 @@
 package filesplitterapp.model.splitter;
 
 public class SplitterException extends Exception {
-    private String message;
-    private Exception exception;
 
-    public SplitterException(String message, Exception exception) {
-        this.message = message;
-        this.exception = exception;
+    public SplitterException(String msg) {
+        super(msg);
     }
 
-    @Override
-    public String getMessage() {
-        return message;
+    public SplitterException(Throwable cause) {
+        super(cause);
     }
 
-    public Exception getException() {
-        return exception;
+    public SplitterException(String msg, Throwable cause) {
+        super(msg, cause);
     }
 }

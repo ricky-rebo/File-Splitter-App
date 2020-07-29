@@ -18,7 +18,7 @@ public class Merger extends FileManipulator {
 		byte[] fileBytes;
 
 		for(int i = 0; i<info.getParts(); i++) {
-			fileBytes = readPart(getPartFile(info.getWorkspace(), i+1));
+			fileBytes = readFile(getPartFile(info.getWorkspace(), i+1));
 			if(fileBytes == null) throw new Exception("Impossibile leggere file " + getPartFile(info.getWorkspace(), i+1).getName());
 			buffer.write(fileBytes);
 
@@ -30,23 +30,6 @@ public class Merger extends FileManipulator {
 
 		writeFile(info.getFile(), buffer.toByteArray());
 		buffer.close();
-	}
-
-	private void writeFile(File file, byte[] bytes) throws SplitterException {
-		FileOutputStream fout;
-		try {
-			fout = new FileOutputStream(file);
-			fout.write(bytes);
-			fout.close();
-		} catch (IOException ex) {
-			if(file.exists() && file.isFile()) file.delete();
-			throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath(), ex);
-		}
-
-	}
-
-	protected byte[] readPart(File file) throws SplitterException {
-		return readFile(file);
 	}
 
 

@@ -1,8 +1,6 @@
 package filesplitterapp.model.splitter;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public abstract class FileManipulator {
     protected static final String PART_EXT = ".par";
@@ -39,6 +37,18 @@ public abstract class FileManipulator {
         } catch (IOException ex) {
             throw new SplitterException("Impossibile leggere file\n"+file.getAbsolutePath()+
                     "", ex);
+        }
+    }
+
+    protected void writeFile(File file, byte[] bytes) throws SplitterException {
+        FileOutputStream fout;
+        try {
+            fout = new FileOutputStream(file);
+            fout.write(bytes);
+            fout.close();
+        } catch (IOException ex) {
+            if(file.exists() && file.isFile()) file.delete();
+            throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath(), ex);
         }
     }
 }

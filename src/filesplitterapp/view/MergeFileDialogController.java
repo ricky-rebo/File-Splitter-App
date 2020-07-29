@@ -1,9 +1,9 @@
 package filesplitterapp.view;
 
+import filesplitterapp.MainApp;
 import filesplitterapp.model.splitter.*;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
 
-import filesplitterapp.util.Util;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
@@ -17,9 +17,6 @@ import java.security.InvalidKeyException;
 
 //TODO docs
 public class MergeFileDialogController {
-    private Stage dialogStage;
-    private SplitInfo info = null;
-
     @FXML private Label lblPinfFile;
     @FXML private Label lblFile;
     @FXML private Label lblSplitMode;
@@ -30,6 +27,10 @@ public class MergeFileDialogController {
     @FXML private TextField txtKey;
 
     @FXML private CheckBox chkDeleteFiles;
+
+    private MainApp mainApp;
+    private Stage dialogStage;
+    private SplitInfo info = null;
 
     /**
      * Default constructor
@@ -66,6 +67,9 @@ public class MergeFileDialogController {
     }
 
 
+    public void setMainApp(MainApp mainApp) { this.mainApp = mainApp; }
+
+
     /**
      * Open a file chooser and let the user choose a .pinf file, and if a file
      * has been chosen it try to load Split Info and sets it
@@ -87,7 +91,7 @@ public class MergeFileDialogController {
             setInfo(file, tmp);
             return true;
         } catch (SplitterException ex) {
-            Util.throwAlert(AlertType.ERROR, "File Splitter - ERROR", "File non caricato!", ex.getMessage());
+            mainApp.throwAlert(AlertType.ERROR, "File Splitter - ERROR", "File non caricato!", ex.getMessage());
             return false;
         }
     }
@@ -117,7 +121,7 @@ public class MergeFileDialogController {
 
     @FXML
     private void handleChangeSaveTo() {
-        String newDest = Util.chooseDirectory(txtSaveTo.getText(), dialogStage);
+        String newDest = mainApp.chooseDirectory(txtSaveTo.getText(), dialogStage);
         if(newDest != null)  txtSaveTo.setText(newDest);
     }
 
@@ -135,18 +139,20 @@ public class MergeFileDialogController {
             //Se la destinazione del file è stata cambiata nel form, viene cambiata anche nel'oggetto info
             if(!info.getFile().getParent().equals(txtSaveTo.getText())) info.setFileLocation(txtSaveTo.getText());
             try { merger.merge(); }
-            catch(Exception ex) { Util.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
+            catch(Exception ex) { mainApp.throwAlert(AlertType.ERROR, "DEBUG", "ERROR", ex.getMessage()); }
 
             if(chkDeleteFiles.isSelected())
                 merger.deletePartFiles();
 
-            Util.throwAlert(AlertType.INFORMATION, "Merge File", "File ricomposto correttamente",
+            mainApp.throwAlert(AlertType.INFORMATION, "Merge File", "File ricomposto correttamente",
                     "Il file "+info.getName()+" è stato ricomposto correttamente.");
             dialogStage.close();
         } catch (InvalidKeyException e) {
-            Util.throwAlert(AlertType.ERROR, "Merge file", "Errore!", e.getMessage());
+            mainApp.throwAlert(AlertType.ERROR, "Merge file", "Errore!", e.getMessage());
+        } catch (SecurableException ex) {
+            ex.printStackTrace();
+            //TODO add error log?
         }
-        //TODO add throws custom exception on merge() -> delete merged file if procedure fail
     }
 
 

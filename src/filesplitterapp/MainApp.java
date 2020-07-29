@@ -10,7 +10,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -117,6 +119,7 @@ public class MainApp extends Application {
 			//Create the controller and sets the SplitInfo into it
 			EditFileDialogController controller = loader.getController();
 			controller.setDialogStage(dialogStage);
+			controller.setMainApp(this);
 			controller.setSplitFile(splitFile);
 			controller.allowMultipleApply(allowMultiple);
 
@@ -149,6 +152,7 @@ public class MainApp extends Application {
 			//Create the controller and sets the stage
 			MergeFileDialogController controller = loader.getController();
 			controller.setDialogStage(dialogStage);
+			controller.setMainApp(this);
 
 
 			if(controller.chooseInfoFile(primaryStage))
@@ -156,6 +160,35 @@ public class MainApp extends Application {
 
 		}
 		catch (IOException ex) { ex.printStackTrace(); }
+	}
+
+
+	public static String chooseDirectory(String initDir, Stage dialogStage) {
+		DirectoryChooser dirChooser = new DirectoryChooser();
+		dirChooser.setTitle("Seleziona Cartella");
+		File initDirFile = new File(initDir);
+		if(!initDirFile.isDirectory()) initDirFile = new File(System.getProperty("user.home"));
+
+		dirChooser.setInitialDirectory(initDirFile);
+		File selPath = dirChooser.showDialog(dialogStage);
+		return selPath == null ? null : selPath.getAbsolutePath();
+	}
+
+
+	/**
+	 * Throw a new alert popup.
+	 *
+	 * @param type the alert type
+	 * @param title the alert title
+	 * @param headerText the header text
+	 * @param contentText the content text
+	 */
+	public static void throwAlert(Alert.AlertType type, String title, String headerText, String contentText) {
+		Alert alert = new Alert(type);
+		alert.setTitle(title);
+		alert.setHeaderText(headerText);
+		alert.setContentText(contentText);
+		alert.showAndWait();
 	}
 
 

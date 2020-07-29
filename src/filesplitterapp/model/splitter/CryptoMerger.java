@@ -4,38 +4,23 @@ package filesplitterapp.model.splitter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class CryptoMerger extends Merger implements Securable{
     private Cipher cipher;
-    private byte[] keyBytes;
 
-    public CryptoMerger(SplitInfo info, String key) throws InvalidKeyException {
+    public CryptoMerger(SplitInfo info, String passwd) throws InvalidKeyException, SecurableException {
         super(info);
+        passwd = calcMD5(passwd);
 
         //Inserted key check
-        String keyHash = Securable.calcMD5(key.getBytes());
-        System.out.println("> Inserted key hash: "+keyHash+"\n> Original key hash: "+info.getKeyHash());
+        String keyHash = calcMD5(passwd);
         if(!keyHash.equals(info.getKeyHash()))
-            throw new InvalidKeyException("Chiave inserita non valida!");
+            throw new InvalidKeyException("Chiave inserita non valida");
 
-        keyBytes = key.getBytes();
-        if(keyBytes.length < KEY_LEN) keyBytes = Arrays.copyOf(keyBytes, KEY_LEN);
-        System.out.println("> Merger keyBytes lenght: "+keyBytes.length);
-
-        try {cipher = Cipher.getInstance(CIPHER_ALG);}
-        catch (NoSuchAlgorithmException | NoSuchPaddingException ex) { ex.printStackTrace(); }
-
-        // Transformation of the algorithm
-        try {cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyBytes, KEY_ALG), new IvParameterSpec(info.getIV()));}
-        catch (InvalidKeyException | InvalidAlgorithmParameterException e1) { e1.printStackTrace(); }
+        cipher = getCipher(Cipher.DECRYPT_MODE, keyHash.getBytes(), new IvParameterSpec(info.getIV(keyHash)));
     }
 
 
@@ -47,12 +32,12 @@ public class CryptoMerger extends Merger implements Securable{
 
 
     @Override
-    protected byte[] readPart(File file) throws SplitterException {
+    protected byte[] readFile(File file) throws SplitterException {
         try {
             if(isLastPart(file.getName()))
-                return cipher.doFinal(readFile(file));
+                return cipher.doFinal(super.readFile(file));
             else
-                return cipher.update(readFile(file));
+                return cipher.update(super.readFile(file));
         } catch (BadPaddingException | IllegalBlockSizeException ex) {
             throw new SplitterException("Impossibile decriptare file\n"+file.getAbsolutePath(), ex);
         }

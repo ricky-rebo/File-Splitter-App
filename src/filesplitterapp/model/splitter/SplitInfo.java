@@ -1,6 +1,8 @@
 package filesplitterapp.model.splitter;
 
 import java.io.*;
+import java.security.InvalidKeyException;
+
 import filesplitterapp.model.splitter.Splitter.SplitMode;
 
 
@@ -18,7 +20,7 @@ public class SplitInfo implements Serializable {
     private int parts;
     private SplitMode splitMode;
     private String keyHash = null;
-    private byte[] iv = null; //TODO
+    private byte[] iv = null;
 
 
     /**
@@ -48,7 +50,7 @@ public class SplitInfo implements Serializable {
     public void setKeyHash(String keyHash) { this.keyHash = keyHash; }
     public void setIV(byte[] iv) { this.iv = iv; }
     public String getKeyHash() { return keyHash; }
-    public byte[] getIV() { return iv; }
+    public byte[] getIV(String chkKeyHash){ return keyHash.equals(chkKeyHash) ? iv : null; }
 
     public String getInfoFilename() {
         return file.getName().substring(0, file.getName().lastIndexOf('.'))+PINFO_EXT;

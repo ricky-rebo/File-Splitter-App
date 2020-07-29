@@ -1,8 +1,8 @@
 package filesplitterapp.view;
 
+import filesplitterapp.MainApp;
 import filesplitterapp.model.SplitFile;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
-import filesplitterapp.util.Util;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -26,6 +26,7 @@ public class EditFileDialogController {
 	@FXML private CheckBox chkApplyMultiple;
 	@FXML private CheckBox chkSaveToSubDir;
 
+	private MainApp mainApp;
 	private Stage dialogStage;
 	private SplitFile splitFile;
 	private boolean okClicked = false;
@@ -90,6 +91,9 @@ public class EditFileDialogController {
 	public void setDialogStage(Stage stage) { dialogStage = stage; }
 
 
+	public void setMainApp(MainApp mainApp) { this.mainApp = mainApp; }
+
+
 	/**
 	 * Toggle the possibility to apply settings to multiple files
 	 * @param b true to allow multiple apply, false otherwise
@@ -113,7 +117,7 @@ public class EditFileDialogController {
 
 	@FXML
 	private void handleChangeDestDir() {
-		String newDest = Util.chooseDirectory(txtDestPath.getText(), dialogStage);
+		String newDest = mainApp.chooseDirectory(txtDestPath.getText(), dialogStage);
 		if(newDest != null) txtDestPath.setText(newDest);
 	}
 
@@ -169,7 +173,7 @@ public class EditFileDialogController {
 		if(err.length() == 0)
 			return true;
 		else {
-			Util.throwAlert(AlertType.ERROR, "FileSplitter", "Errore\nInput non valido!", err);
+			mainApp.throwAlert(AlertType.ERROR, "FileSplitter", "Errore\nInput non valido!", err);
 			return false;
 		}
 	}

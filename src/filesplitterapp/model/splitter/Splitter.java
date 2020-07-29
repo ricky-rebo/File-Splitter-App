@@ -48,27 +48,12 @@ public class Splitter extends FileManipulator {
 
 		for(int i=0; i<parts.size(); i++) {
 			System.out.println("> Part "+i+" dim: "+parts.get(i).length);
-			writePart(parts.get(i), getPartFile(info.getWorkspace(), i+1));
+			writeFile(getPartFile(info.getWorkspace(), i+1), parts.get(i));
 		}
 
 		info.save();
 		return true;
 	}
-
-
-	protected void writePart(byte[] part, File file) throws SplitterException {
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(file);
-			fos.write(part);
-			fos.close();
-		}
-		catch(IOException ex) {
-			deleteParts();
-			throw new SplitterException("Impossibile scrivere file\n"+file.getAbsolutePath()+"\n\nFile \"+info.getName()+\" non diviso", ex);
-		}
-	}
-
 
 	private List<byte[]> partition(byte[] bytes, int partsnum) {
 		List<byte[]> parts = new ArrayList<>();

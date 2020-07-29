@@ -4,50 +4,32 @@ package filesplitterapp.model.splitter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class CryptoSplitter extends Splitter implements Securable {
-    private byte[] keyBytes;
-    private Cipher cipher = null;
+    private Cipher cipher;
 
 
     //TODO docs
-    public CryptoSplitter(SplitInfo infos, String keyString) {
+    public CryptoSplitter(SplitInfo infos, String passwd) throws SecurableException {
         super(infos);
-        keyBytes = keyString.getBytes();
-        info.setKeyHash(Securable.calcMD5(keyBytes));
+        passwd = calcMD5(passwd);
+        info.setKeyHash(calcMD5(passwd));
+        //System.out.println(("> Key Hash: "+info.getKeyHash()+" (len: "+info.getKeyHash().getBytes().length+")"));
 
-        //Create a key
-        if(keyBytes.length < KEY_LEN) keyBytes = Arrays.copyOf(keyBytes, KEY_LEN);
-        Key key = new SecretKeySpec(keyBytes, KEY_ALG);
+        cipher = getCipher(Cipher.ENCRYPT_MODE, info.getKeyHash().getBytes());
 
-        // Create Cipher instance and initialize it to encryption mode
-        try {
-            cipher = Cipher.getInstance(CIPHER_ALG);
-            cipher.init(Cipher.ENCRYPT_MODE, key);
-        }
-        catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException ex) {
-            ex.printStackTrace();
-        }
     }
 
     private boolean isLastPart(String pname) {
-        int pnum = Integer.parseInt(String.valueOf(pname.charAt(pname.length() - 1)));
-        if(pnum == info.getParts()) return true;
-        return false;
+        return Integer.parseInt(String.valueOf(pname.charAt(pname.length()-1))) == info.getParts();
     }
 
 
     @Override
-    protected void writePart(byte[] part, File file) throws SplitterException {
+    protected void writeFile(File file, byte[] part) throws SplitterException {
         System.out.print("> Writing crypted part " + file.getName());
         FileOutputStream fos = null;
         try {

@@ -14,7 +14,7 @@ public class ZipSplitter extends Splitter {
 
 
     @Override
-    protected void writePart(byte[] part, File file) throws SplitterException {
+    protected void writeFile(File file, byte[] part) throws SplitterException {
         ZipOutputStream zos = null;
         try {
             zos = new ZipOutputStream(new FileOutputStream(file));

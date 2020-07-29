@@ -4,7 +4,6 @@ import filesplitterapp.MainApp;
 import filesplitterapp.model.SplitFile;
 import filesplitterapp.model.SplitThread;
 import filesplitterapp.model.splitter.Splitter.SplitMode;
-import filesplitterapp.util.Util;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -122,7 +121,7 @@ public class HomeController {
 		if(selectedIndex >= 0)
 			fileTable.getItems().remove(selectedIndex);
 		else
-			Util.throwAlert(AlertType.WARNING, "Filesplitter", "Nessun file selezionato!",
+			mainApp.throwAlert(AlertType.WARNING, "Filesplitter", "Nessun file selezionato!",
 					"Per rimuovere un file dalla lista devi prima selezionarlo!");
 	}
 
@@ -134,7 +133,7 @@ public class HomeController {
 			mainApp.showEditFileDialog(fileTable.getSelectionModel().getSelectedItem(), false);
 		}
 		else
-			Util.throwAlert(AlertType.WARNING, "Filesplitter", "Nessun file selezionato!",
+			mainApp.throwAlert(AlertType.WARNING, "Filesplitter", "Nessun file selezionato!",
 					"Per modificare un file devi prima selezionarlo!");
 	}
 
@@ -197,10 +196,10 @@ public class HomeController {
 		}
 
 		if(failed.length() == 0)
-			Util.throwAlert(AlertType.INFORMATION, "Split Files", "Operazione completata",
+			mainApp.throwAlert(AlertType.INFORMATION, "Split Files", "Operazione completata",
 				"Tutti i file sono stati divisi con successo.");
 		else
-			Util.throwAlert(AlertType.WARNING, "Split Files", "Attenzione",
+			mainApp.throwAlert(AlertType.WARNING, "Split Files", "Attenzione",
 				"I seguenti file non sono stati divisi:\n\n"+failed);
 	}
 
