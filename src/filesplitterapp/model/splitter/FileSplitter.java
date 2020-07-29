@@ -1,4 +1,4 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,9 +16,9 @@ public class FileSplitter extends FileDimModifier {
 
 
 	//TODO docs
-	public FileSplitter(SplitInfo infos) {
-		super(infos);
-		partSize = (int) infos.getFileSize() / infos.getParts();
+	public FileSplitter(SplitInfo info) {
+		super(info);
+		partSize = info.getFileSize() / info.getParts();
 	}
 
 

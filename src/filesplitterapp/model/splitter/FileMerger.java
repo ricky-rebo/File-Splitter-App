@@ -1,6 +1,6 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
-import filesplitter.util.Util;
+import filesplitterapp.util.Util;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -44,16 +44,16 @@ public class FileMerger extends FileDimModifier {
 		//Check if a file with the same name already exist in that location
 		String mergedFilename;
 		if(info.getFile().exists() && info.getFile().isFile())
-			mergedFilename = saveTo+"\\merged_"+info.getName();
+			mergedFilename = saveTo+SEPARATOR+"merged_"+info.getName();
 		else
-			mergedFilename = saveTo+'\\'+info.getName();
+			mergedFilename = saveTo+SEPARATOR+info.getName();
 
 		//TODO re-do merge procedure
 		//	write a function that get a part based on SplitMode
 		//	and slim the for cycle here
 		try {
 			fout = new FileOutputStream(mergedFilename);
-			String partLocation = info.getFile().getParent()+'\\';
+			String partLocation = info.getFile().getParent()+SEPARATOR;
 			for(int i = 0; i<info.getParts(); i++) {
 				switch(info.getSplitMode()) {
 					case DEFAULT:
@@ -83,11 +83,6 @@ public class FileMerger extends FileDimModifier {
 		try {
 			baos = new ByteArrayOutputStream();
 			zis = new ZipInputStream(new FileInputStream(file));
-			//System.out.print("> Loading zip part "+file.toString()+" (size: "+file.length()+")");
-			ZipEntry zipEntry = zis.getNextEntry();
-
-			//System.out.println(zipEntry.getSize());
-
 			buffer = new byte[1024];
 			int len;
 			while((len = zis.read(buffer))>0)
@@ -95,9 +90,10 @@ public class FileMerger extends FileDimModifier {
 			zis.closeEntry();
 			zis.close();
 		}
-		catch(IOException ex) {ex.printStackTrace();}
+		catch(IOException ex) {
+			ex.printStackTrace();
+		}
 
-		//System.out.println(" (unzipped size: "+baos.size()+")");
 		return baos.toByteArray();
 	}
 
@@ -122,9 +118,9 @@ public class FileMerger extends FileDimModifier {
 
 	//TODO docs
 	public void deletePartFiles() {
-		new File(info.getFile().getParent()+'\\'+info.getInfoFilename()).delete();
+		new File(info.getFile().getParent()+SEPARATOR+info.getInfoFilename()).delete();
 		for(int i=0; i<info.getParts(); i++) {
-			getPartFile(info.getFile().getParent()+'\\', i+1).delete();
+			getPartFile(info.getFile().getParent()+SEPARATOR, i+1).delete();
 		}
 	}
 }

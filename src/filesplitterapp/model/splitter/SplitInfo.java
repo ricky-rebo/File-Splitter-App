@@ -1,10 +1,11 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 import java.io.*;
 
 //TODO docs
 public class SplitInfo implements Serializable {
     private static final long serialVersionUID = 20191206L;
+    private static final String SEPARATOR = File.separator;
     /**
      * L'estensione utilizzata dai file su cui questo oggetto viene serializzato.
      */
@@ -48,7 +49,7 @@ public class SplitInfo implements Serializable {
     public void save(String saveTo) {
         ObjectOutputStream setInfo = null;
         try {
-            setInfo = new ObjectOutputStream(new FileOutputStream(saveTo+'\\'+getInfoFilename()));
+            setInfo = new ObjectOutputStream(new FileOutputStream(saveTo+SEPARATOR+getInfoFilename()));
             setInfo.writeObject(this);
             setInfo.flush();
             setInfo.close();
@@ -83,7 +84,7 @@ public class SplitInfo implements Serializable {
             throw new FileSplitterException(msg, ex);
         }
 
-        obj.file = new File(infoFile.getParent()+'\\'+obj.getName());
+        obj.file = new File(infoFile.getParent()+SEPARATOR+obj.getName());
         return obj;
     }
 }

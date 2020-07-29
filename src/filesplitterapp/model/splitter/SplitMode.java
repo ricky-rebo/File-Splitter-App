@@ -1,4 +1,4 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 /**
  * SplitMode enumerator

@@ -1,8 +1,8 @@
-package filesplitter.view;
+package filesplitterapp.view;
 
-import filesplitter.model.SplitFile;
-import filesplitter.model.splitter.SplitMode;
-import filesplitter.util.Util;
+import filesplitterapp.model.SplitFile;
+import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.util.Util;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;

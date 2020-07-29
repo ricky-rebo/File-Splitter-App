@@ -1,10 +1,10 @@
-package filesplitter.view;
+package filesplitterapp.view;
 
-import filesplitter.model.splitter.FileMerger;
-import filesplitter.model.splitter.FileSplitterException;
-import filesplitter.model.splitter.SplitInfo;
-import filesplitter.model.splitter.SplitMode;
-import filesplitter.util.Util;
+import filesplitterapp.model.splitter.FileMerger;
+import filesplitterapp.model.splitter.FileSplitterException;
+import filesplitterapp.model.splitter.SplitInfo;
+import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.util.Util;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;

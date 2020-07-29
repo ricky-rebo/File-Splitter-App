@@ -1,10 +1,11 @@
-package filesplitter.view;
+package filesplitterapp.view;
 
-import filesplitter.MainApp;
-import filesplitter.model.SplitFile;
-import filesplitter.model.SplitThread;
-import filesplitter.model.splitter.SplitMode;
-import filesplitter.util.Util;
+import filesplitterapp.MainApp;
+import filesplitterapp.model.SplitFile;
+import filesplitterapp.model.SplitThread;
+import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.util.Util;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.*;
@@ -17,7 +18,6 @@ import java.util.List;
 public class HomeController {
 	//FXML Elements
 	@FXML private TableView<SplitFile> fileTable;
-
 	@FXML private TableColumn<SplitFile, String> fileCol;
 	@FXML private TableColumn<SplitFile, SplitMode> modeCol;
 	@FXML private TableColumn<SplitFile, Number> sizeCol;
@@ -33,7 +33,7 @@ public class HomeController {
 	private MainApp mainApp;
 
 	//Progressbar management
-	private int totalSteps;
+	private int totalSteps = 0;
 	private boolean completed;
 
 
@@ -101,7 +101,7 @@ public class HomeController {
 
 	//TODO docs
 	public synchronized void incProgress() {
-		if(completed) return;
+		if(completed || totalSteps==0) return;
 
 		progressbar.setProgress(progressbar.getProgress() + 1.0/(double)totalSteps);
 		lblProgress.setText("Completamento... " + progressbar.getProgress()*100 + "%");
@@ -153,7 +153,7 @@ public class HomeController {
 			if(useModel) { mainApp.getFileList().add(model.getCopy(f)); }
 			else {
 				SplitFile tmp = new SplitFile(f, SplitMode.DEFAULT);
-				boolean[] flags = mainApp.showEditFileDialog(tmp,  multipleFiles);
+				boolean[] flags = mainApp.showEditFileDialog(tmp, multipleFiles);
 				if(flags[0]) {
 					mainApp.getFileList().add(tmp);
 					if(flags[1]) {
@@ -170,12 +170,12 @@ public class HomeController {
 	private void handleSplitFiles() {
 		int listDim = mainApp.getFileList().size();
 		SplitThread threads[] = new SplitThread[listDim];
-		String unsplitted = "";
+		String failed = "";
 		resetProgress(listDim);
 
 		//Creazione threads
 		for(int i=0; i<listDim; i++) {
-			threads[i] = new SplitThread(mainApp.getFileList().get(i), this);
+			threads[i] = new SplitThread(mainApp.getFileList().get(i), () -> Platform.runLater(() -> this.incProgress()));
 			threads[i].start();
 		}
 
@@ -190,18 +190,18 @@ public class HomeController {
 
 		//Rimozione file completati o eventuale segnalazione errori
 		for(int i=0; i<listDim; i++) {
-			if(threads[i].isSplitted())
+			if(threads[i].isSplit())
 				mainApp.getFileList().remove(threads[i].getSplitFile());
 			else
-				unsplitted += "- "+threads[i].getSplitFile().filenameProperty().get()+"\n";
+				failed += "- "+threads[i].getSplitFile().filenameProperty().get()+"\n";
 		}
 
-		if(unsplitted.length() == 0)
+		if(failed.length() == 0)
 			Util.throwAlert(AlertType.INFORMATION, "Split Files", "Operazione completata",
 				"Tutti i file sono stati divisi con successo.");
 		else
 			Util.throwAlert(AlertType.WARNING, "Split Files", "Attenzione",
-				"I seguenti file non sono stati divisi:\n\n"+unsplitted);
+				"I seguenti file non sono stati divisi:\n\n"+failed);
 	}
 
 

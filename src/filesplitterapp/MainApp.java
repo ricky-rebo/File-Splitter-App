@@ -1,10 +1,10 @@
-package filesplitter;
+package filesplitterapp;
 
-import filesplitter.model.SplitFile;
-import filesplitter.model.splitter.SplitMode;
-import filesplitter.view.EditFileDialogController;
-import filesplitter.view.HomeController;
-import filesplitter.view.MergeFileDialogController;
+import filesplitterapp.model.SplitFile;
+import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.view.EditFileDialogController;
+import filesplitterapp.view.HomeController;
+import filesplitterapp.view.MergeFileDialogController;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

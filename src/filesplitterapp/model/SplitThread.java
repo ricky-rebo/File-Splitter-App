@@ -1,25 +1,25 @@
-package filesplitter.model;
+package filesplitterapp.model;
 
-import filesplitter.model.splitter.CryptFileSplitter;
-import filesplitter.model.splitter.FileSplitter;
-import filesplitter.model.splitter.ZipFileSplitter;
-import filesplitter.view.HomeController;
-import javafx.application.Platform;
+import filesplitterapp.model.splitter.CryptFileSplitter;
+import filesplitterapp.model.splitter.FileSplitter;
+import filesplitterapp.model.splitter.ZipFileSplitter;
+import filesplitterapp.view.HomeController;
 
 public class SplitThread extends Thread {
     private SplitFile splitFile;
     private HomeController controller;
+    private Runnable callback;
 
-    private boolean splitted = false;
+    private boolean split= false;
 
-    public SplitThread(SplitFile splitFile, HomeController controller) {
+    public SplitThread(SplitFile splitFile, Runnable callback) {
         this.splitFile = splitFile;
-        this.controller = controller;
+        this.callback = callback;
     }
 
     @Override
     public void run() {
-        System.out.println("THREAD LAUNCHED");
+        //System.out.println("THREAD LAUNCHED");
         FileSplitter splitter = null;
         switch(splitFile.getSplitMode()) {
             case DEFAULT:
@@ -36,18 +36,18 @@ public class SplitThread extends Thread {
 
         //TODO add custom exception on split() and remove a file from list only of it has been split correctly
 
-        splitted = splitter.split(splitFile.getFinalDestPath());
+        split = splitter.split(splitFile.getFinalDestPath());
 
         //I componenti di JavaFX possono essere modificati solo dal Thread di JavaFX, quindi
         // Usiamo Platform.runLater()
-        Platform.runLater(() -> controller.incProgress());
+        callback.run();
     }
 
     public SplitFile getSplitFile() {
         return splitFile;
     }
 
-    public boolean isSplitted() {
-        return splitted;
+    public boolean isSplit() {
+        return split;
     }
 }

@@ -1,4 +1,4 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 
 import javax.crypto.BadPaddingException;

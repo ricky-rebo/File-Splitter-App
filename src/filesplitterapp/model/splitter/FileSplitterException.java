@@ -1,4 +1,4 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 public class FileSplitterException extends Exception {
     private String message;

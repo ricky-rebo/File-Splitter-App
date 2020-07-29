@@ -1,8 +1,8 @@
-package filesplitter.model;
+package filesplitterapp.model;
 
-import filesplitter.model.splitter.SplitInfo;
-import filesplitter.model.splitter.SplitMode;
-import filesplitter.util.Util;
+import filesplitterapp.model.splitter.SplitInfo;
+import filesplitterapp.model.splitter.SplitMode;
+import filesplitterapp.util.Util;
 import javafx.beans.property.*;
 
 import java.io.File;

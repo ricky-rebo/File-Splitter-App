@@ -1,4 +1,4 @@
-package filesplitter.model.splitter;
+package filesplitterapp.model.splitter;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public abstract class FileDimModifier {
 
     public FileDimModifier() { info = null; }
 
-    FileDimModifier(SplitInfo info) { this.info = info; }
+    public FileDimModifier(SplitInfo info) { this.info = info; }
 
     //TODO docs
     protected File getPartFile(String dest, int i) {

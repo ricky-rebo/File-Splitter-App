@@ -1,4 +1,4 @@
-package filesplitter.util;
+package filesplitterapp.util;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -24,7 +24,6 @@ public class Util {
         alert.setTitle(title);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
-
         alert.showAndWait();
 	}
 
